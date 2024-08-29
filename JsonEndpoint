@@ -1,0 +1,88 @@
+-----------rx generate------------------
+{
+  "RXDATE": "sdafaf edit",
+  "followUp": 1,
+  "rxStatus": 1,
+  "rxmedicine": [
+    {
+      "id":7,
+      "patientsrxid": 24,
+      "medicineId": 1,
+      "doses": "doses edit 77",
+      "isContinue":1,
+      "duration":"1",
+      "remarks":"remarks",
+      "activeStatus": 1
+    },
+      {
+      "id":8,
+      "patientsrxid": 24,
+      "medicineId": 1,
+      "doses": "new doses edit 88",
+      "isContinue":1,
+      "duration":"1",
+      "remarks":"remarks",
+      "activeStatus": 1
+    },
+   {
+      "id":9,
+      "patientsrxid": 24,
+      "medicineId": 1,
+      "doses": "new doses edit 99",
+      "isContinue":1,
+      "duration":"1",
+      "remarks":"remarks",
+      "activeStatus": 1
+    },
+    {
+      "id":11,
+      "patientsrxid": 24,
+      "medicineId": 1,
+      "doses": "new doses edit 99",
+      "isContinue":1,
+      "duration":"1",
+      "remarks":"remarks",
+      "activeStatus": 1
+    },
+     {
+       "id":12,
+      "patientsrxid": 24,
+      "medicineId": 1,
+      "doses": "new again doses edit 12",
+      "isContinue":1,
+      "duration":"1",
+      "remarks":"remarks",
+      "activeStatus": 1
+    },
+     {
+      "id":13,
+      "patientsrxid": 24,
+      "medicineId": 1,
+      "doses": "new again doses edit 13",
+      "isContinue":1,
+      "duration":"1",
+      "remarks":"remarks",
+      "activeStatus": 1
+    }
+    
+  ],
+  "rxexaminations": [
+    {
+      "id": 18,
+      "patientsrxid": 24,
+      "examinationId": 1,
+      "activeStatus": 1
+    },
+    {
+      "id": 20,
+      "patientsrxid": 24,
+      "examinationId": 2,
+      "activeStatus": 1
+    },
+    {
+    "patientsrxid": 24,
+      "examinationId": 3,
+      "activeStatus": 1
+    }
+  ]
+}
