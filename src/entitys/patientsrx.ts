@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn } from 't
 import { Rxmedicine } from './rxmedicine';
 import { Rxexaminations } from './rxexaminations';
 import { RxInvestigations } from './rxinvestigations';
+import { RxAdvice } from './rxadvice';
 
 @Entity('patientsrx')
 export class Patientsrx {
@@ -40,4 +41,11 @@ export class Patientsrx {
     eager: true
   })
   rxInvestigations: RxInvestigations[]
+
+  @OneToMany(() => RxAdvice, (rxAdvice) => rxAdvice.patientsrx, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    eager: true
+  })
+  rxAdvice: RxAdvice[]
 }
