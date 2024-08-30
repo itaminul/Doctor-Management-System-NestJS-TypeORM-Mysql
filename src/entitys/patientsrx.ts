@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn } from 'typeorm';
 import { Rxmedicine } from './rxmedicine';
 import { Rxexaminations } from './rxexaminations';
+import { RxInvestigations } from './rxinvestigations';
 
 @Entity('patientsrx')
 export class Patientsrx {
@@ -32,4 +33,11 @@ export class Patientsrx {
     eager: true
   })
   rxexaminations: Rxexaminations[]
+
+  @OneToMany(() => RxInvestigations, (rxInvestigation) => rxInvestigation.patientsrx, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    eager: true
+  })
+  rxInvestigations: RxInvestigations[]
 }
