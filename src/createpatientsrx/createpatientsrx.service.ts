@@ -8,6 +8,7 @@ import { CreatePatientsRxDTO } from './dto/patientrx.dto';
 import { UpdatePatientsRxDTO } from './dto/updatePatientrx.dto';
 import { RxInvestigations } from 'src/entitys/rxinvestigations';
 import { RxAdvice } from 'src/entitys/rxadvice';
+import { Rxcomplains } from 'src/entitys/rxcomplains';
 
 @Injectable()
 export class CreatepatientsrxService {
@@ -21,7 +22,9 @@ export class CreatepatientsrxService {
         @InjectRepository(RxInvestigations)
         public readonly rxInvestigationsRepository: Repository<RxInvestigations>,
         @InjectRepository(RxAdvice)
-        public readonly rxAdviceRepository: Repository<RxAdvice>
+        public readonly rxAdviceRepository: Repository<RxAdvice>,
+        @InjectRepository(Rxcomplains)
+        public readonly rxComplainRepositor: Repository<Rxcomplains>
 
     ) {}
 
@@ -37,7 +40,7 @@ export class CreatepatientsrxService {
     }
 
     async create (@Body() createPatientDto: CreatePatientsRxDTO) {
-        const {rxmedicine, rxexaminations, rxInvestigations, rxadvice, ...patientData} = createPatientDto;   
+        const {rxmedicine, rxexaminations, rxInvestigations, rxadvice, rxComplains, ...patientData} = createPatientDto;   
         const patientDataa = this.patientRxRepository.create(patientData);
         const savePatientRx = await this.patientRxRepository.save(patientDataa);
         const medicines = rxmedicine.map(medicineDto => {
@@ -80,13 +83,24 @@ export class CreatepatientsrxService {
         })
         await this.rxAdviceRepository.save(rxadvices)
 
+        //rxComplains
+
+        const rxcomplain = rxComplains.map(rxComplainDto => {
+            const complain = this.rxComplainRepositor.create({
+                ...rxComplainDto,
+                patientsrx: savePatientRx
+            })
+            return complain;
+        })
+        await this.rxComplainRepositor.save(rxcomplain)
+
      
         return savePatientRx;
 
     }
 
     async update(id: number, updatePatientsRxDTO:UpdatePatientsRxDTO ) {
-        const { rxmedicine, rxexaminations, rxInvestigations, rxAdvice, ...patientData } = updatePatientsRxDTO;
+        const { rxmedicine, rxexaminations, rxInvestigations, rxAdvice, rxComplains, ...patientData } = updatePatientsRxDTO;
         const patient = await this.patientRxRepository.findOne({
             where: {id},
             relations: ['rxmedicine', 'rxexaminations']
@@ -228,6 +242,35 @@ export class CreatepatientsrxService {
                 }
             }
             patient.rxAdvice = updateAdvice;
+        }
+
+        if(rxComplains) {
+            patient.rxComplains = patient.rxComplains.filter(complains => 
+                rxComplains.some(j => j.id === complains.id)
+            )
+            const updateComplains = [];
+            for(const rxComplainDto of rxComplains) {
+                if(rxComplainDto.id) {
+                    const existingComplains = await this.rxComplainRepositor.findOne({
+                        where: { id: rxComplainDto.id, patientsrx: { id: patient.id}}
+                    })
+
+                    if(existingComplains) {
+                        Object.assign(existingComplains, rxComplainDto);
+                        await this.rxComplainRepositor.save(existingComplains)
+                        updateComplains.push(existingComplains)
+                    }
+                }else{
+                    const newComplains = this.rxComplainRepositor.create({
+                        ...rxComplainDto,
+                        updated_at: new Date(),
+                        patientsrx: patient
+                    })
+                    const saveComplains = await this.rxComplainRepositor.save(newComplains)
+                    updateComplains.push(saveComplains)
+                }
+            }
+            patient.rxComplains = updateComplains;
         }
     
         
