@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Patientsrx } from 'src/entitys/patientsrx';
 import { Rxmedicine } from 'src/entitys/rxmedicine';
 import { Rxexaminations } from 'src/entitys/rxexaminations';
+import { RxInvestigations } from 'src/entitys/rxinvestigations';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Patientsrx, Rxmedicine, Rxexaminations])],
+  imports: [TypeOrmModule.forFeature([Patientsrx, Rxmedicine, Rxexaminations, RxInvestigations])],
   providers: [CreatepatientsrxService],
   controllers: [CreatepatientsrxController]
 })

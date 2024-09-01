@@ -6,6 +6,7 @@ import { Rxmedicine } from 'src/entitys/rxmedicine';
 import { Repository } from 'typeorm';
 import { CreatePatientsRxDTO } from './dto/patientrx.dto';
 import { UpdatePatientsRxDTO } from './dto/updatePatientrx.dto';
+import { RxInvestigations } from 'src/entitys/rxinvestigations';
 
 @Injectable()
 export class CreatepatientsrxService {
@@ -15,7 +16,10 @@ export class CreatepatientsrxService {
         @InjectRepository(Rxmedicine)
         public readonly rxMedicineRepository: Repository<Rxmedicine>,
         @InjectRepository(Rxexaminations)
-        public readonly rxExaminationsRepository: Repository<Rxexaminations>
+        public readonly rxExaminationsRepository: Repository<Rxexaminations>,
+        @InjectRepository(RxInvestigations)
+        public readonly rxInvestigationsRepository: Repository<RxInvestigations>
+
     ) {}
 
 
@@ -30,8 +34,7 @@ export class CreatepatientsrxService {
     }
 
     async create (@Body() createPatientDto: CreatePatientsRxDTO) {
-        const {rxmedicine, rxexaminations, ...patientData} = createPatientDto;        
-        console.log(createPatientDto);
+        const {rxmedicine, rxexaminations, rxInvestigations, ...patientData} = createPatientDto;   
         const patientDataa = this.patientRxRepository.create(patientData);
         const savePatientRx = await this.patientRxRepository.save(patientDataa);
         const medicines = rxmedicine.map(medicineDto => {
@@ -51,6 +54,20 @@ export class CreatepatientsrxService {
             return examination;
         })
         await this.rxExaminationsRepository.save(examinations);
+
+        //investigation
+
+        const investigations = rxInvestigations.map(investigationDto => {
+            
+            const investigation = this.rxInvestigationsRepository.create({
+                ...investigationDto,
+                patientsrx: savePatientRx,
+            })
+            return investigation;
+        })
+        await this.rxInvestigationsRepository.save(investigations);
+
+     
         return savePatientRx;
 
     }

@@ -2,6 +2,7 @@ import { Type } from "class-transformer"
 import { IsArray, IsNumber, IsString, ValidateNested } from "class-validator"
 import { CreateRxExaminationDTO } from "./rxexamination.dto"
 import { CreateRxMedicineDTO } from "./rxmedicine.dto"
+import { CreateRxInvestigationDTO } from "./rxinvestigation.dto"
 
 export class CreatePatientsRxDTO {
     @IsNumber()
@@ -22,4 +23,9 @@ export class CreatePatientsRxDTO {
     @ValidateNested({ each: true})
     @Type(() => CreateRxMedicineDTO)
     rxmedicine: CreateRxMedicineDTO[]
+
+    @IsArray()
+    @ValidateNested({ each: true})
+    @Type(() => CreateRxInvestigationDTO)
+    rxInvestigations: CreateRxInvestigationDTO[]
 }

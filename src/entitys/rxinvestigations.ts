@@ -21,4 +21,5 @@ export class RxInvestigations {
   })
   @JoinColumn({ name: 'patientsrxid' }) 
   patientsrx: Patientsrx
+
 }
