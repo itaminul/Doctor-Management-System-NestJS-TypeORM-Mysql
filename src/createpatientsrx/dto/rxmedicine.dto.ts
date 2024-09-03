@@ -1,4 +1,6 @@
-import { IsNumber, IsOptional, IsString } from "class-validator"
+import { Type } from "class-transformer"
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator"
+import { CreateMedicineDTO } from "src/medicine/dto/create.medicine.dto"
 
 export class CreateRxMedicineDTO {
     @IsNumber()
@@ -17,4 +19,9 @@ export class CreateRxMedicineDTO {
     @IsOptional()
     @IsString()
     remarks: string
+
+    @IsArray()
+    @ValidateNested()
+    @Type(() => CreateMedicineDTO)
+    medicine: CreateMedicineDTO
 }

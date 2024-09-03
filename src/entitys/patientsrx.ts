@@ -56,4 +56,5 @@ export class Patientsrx {
     eager: true
   })
   rxComplains: Rxcomplains[]
+  
 }
