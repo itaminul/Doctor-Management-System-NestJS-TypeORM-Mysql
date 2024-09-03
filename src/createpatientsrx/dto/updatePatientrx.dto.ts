@@ -4,6 +4,7 @@ import { CreateRxExaminationDTO } from "./rxexamination.dto"
 import { CreateRxMedicineDTO } from "./rxmedicine.dto"
 import { CreateRxInvestigationDTO } from "./rxinvestigation.dto"
 import { CreateRxAdviceDTO } from "./rxadvice.dto"
+import { CreateRxComplainsDTO } from "./rxcomplains.dto"
 
 export class UpdatePatientsRxDTO {
     @IsNumber()
@@ -36,4 +37,9 @@ export class UpdatePatientsRxDTO {
     @ValidateNested({ each: true})
     @Type(() => CreateRxAdviceDTO)
     rxAdvice: CreateRxAdviceDTO[]
+
+    @IsArray()
+    @ValidateNested({ each: true})
+    @Type(() => CreateRxComplainsDTO)
+    rxComplains: CreateRxComplainsDTO[]
 }
