@@ -5,6 +5,10 @@ import { PatPatientsInformation } from './entitys/pat_patients_information';
 import { Patientsrx } from './entitys/patientsrx';
 import { Rxmedicine } from './entitys/rxmedicine';
 import { Rxexaminations } from './entitys/rxexaminations';
+import { RxInvestigations } from './entitys/rxinvestigations';
+import { RxAdvice } from './entitys/rxadvice';
+import { Rxcomplains } from './entitys/rxcomplains';
+import { Medicine } from './entitys/medicine';
 
 export const AppDataSource:DataSourceOptions = {
   type: 'mysql',
@@ -13,7 +17,7 @@ export const AppDataSource:DataSourceOptions = {
   username: 'qmsdrmakbul',         // Update with your MySQL username
   password: 'Qmsdrmakbul24#',     // Update with your MySQL password
   database: 'qmsdrmakbul_db',  // Update with your MySQL database name
-  entities: [Usertable, Test, PatPatientsInformation, Patientsrx, Rxmedicine, Rxexaminations],         // Add your entities here
+  entities: [Usertable, Test, PatPatientsInformation, Patientsrx, Rxmedicine, Rxexaminations, RxInvestigations, RxAdvice, Rxcomplains, Medicine],         // Add your entities here
   synchronize: true,        // Set to false in production
   logging: true,
 };

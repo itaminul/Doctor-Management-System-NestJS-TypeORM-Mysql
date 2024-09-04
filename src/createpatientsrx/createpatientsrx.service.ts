@@ -9,6 +9,7 @@ import { UpdatePatientsRxDTO } from './dto/updatePatientrx.dto';
 import { RxInvestigations } from 'src/entitys/rxinvestigations';
 import { RxAdvice } from 'src/entitys/rxadvice';
 import { Rxcomplains } from 'src/entitys/rxcomplains';
+import { Medicine } from 'src/entitys/medicine';
 
 @Injectable()
 export class CreatepatientsrxService {
@@ -24,7 +25,9 @@ export class CreatepatientsrxService {
         @InjectRepository(RxAdvice)
         public readonly rxAdviceRepository: Repository<RxAdvice>,
         @InjectRepository(Rxcomplains)
-        public readonly rxComplainRepositor: Repository<Rxcomplains>
+        public readonly rxComplainRepositor: Repository<Rxcomplains>,
+        @InjectRepository(Medicine)
+        public readonly medicineRepositor: Repository<Medicine>
 
     ) {}
 
@@ -40,17 +43,39 @@ export class CreatepatientsrxService {
     }
 
     async create (@Body() createPatientDto: CreatePatientsRxDTO) {
+        console.log("createPatientDto", createPatientDto);
         const {rxmedicine, rxexaminations, rxInvestigations, rxadvice, rxComplains, ...patientData} = createPatientDto;   
         const patientDataa = this.patientRxRepository.create(patientData);
         const savePatientRx = await this.patientRxRepository.save(patientDataa);
-        const medicines = rxmedicine.map(medicineDto => {
-            const medicine  = this.rxMedicineRepository.create({
+
+        for (const medicineDto of rxmedicine) {
+            let medicine;
+            
+            if (medicineDto.medicineId) {
+              // Find the existing Medicine by ID
+              medicine = await this.medicineRepositor.findOne({ where: { id: medicineDto.medicineId } });
+      
+              if (!medicine) {
+                throw new Error(`Medicine with id ${medicineDto.medicineId} not found`);
+              }
+            } else {
+              // Create a new Medicine if needed
+              medicine = this.medicineRepositor.create(medicineDto);
+              medicine = await this.medicineRepositor.save(medicine);
+            }
+        
+
+        const rxMdicines = rxmedicine.map(medicineDto => {
+            const rmedicine  = this.rxMedicineRepository.create({
                 ...medicineDto,
-                patientsrx: savePatientRx
+                patientsrx: savePatientRx,
+                medicine
             })
-            return medicine;
+            return rmedicine;
         })
-        await this.rxMedicineRepository.save(medicines);
+    
+        await this.rxMedicineRepository.save(rxMdicines);
+    }
 
         const examinations = rxexaminations.map(examinationDto => {
             const examination = this.rxExaminationsRepository.create({
@@ -105,7 +130,6 @@ export class CreatepatientsrxService {
             where: {id},
             relations: ['rxmedicine', 'rxexaminations']
         })
-        console.log(patient);
 
         if(!patient) {
             throw new Error('Patient not found');
@@ -113,40 +137,77 @@ export class CreatepatientsrxService {
         Object.assign(patient, patientData);
         await this.patientRxRepository.save(patient);
 
+      // Medicine update and insertion
+    if (rxmedicine) {
+        patient.rxmedicine = patient.rxmedicine.filter((medicine) =>
+            rxmedicine.some((m) => m.id === medicine.id)
+        );
 
-        //medicine update start
+        const updateMedicinesRx = [];
+        for (const rxMedicineDto of rxmedicine) {
+            let savedMedicine: Medicine;
 
-        if(rxmedicine) {
-            patient.rxmedicine = patient.rxmedicine.filter(medicine => 
-                rxmedicine.some(m => m.id === medicine.id)
-            )
+            if (rxMedicineDto.id) {
+                const existingMedicineRx = await this.rxMedicineRepository.findOne({
+                    where: { id: rxMedicineDto.id, patientsrx: { id: patient.id } },
+                });
 
-           if(rxmedicine) {
-            const updateMedicines = [];
-            for(const medicineDto of rxmedicine) {
-                if(medicineDto.id) {
-                    const existingMedicine = await this.rxMedicineRepository.findOne({
-                        where: {id: medicineDto.id, patientsrx: {id: patient.id}}
-                    })
-                    if(existingMedicine) {
-                        Object.assign(existingMedicine, medicineDto);
-                        await this.rxMedicineRepository.save(existingMedicine);
-                        updateMedicines.push(existingMedicine)
+                if (existingMedicineRx) {
+                    if (rxMedicineDto.medicineId) {
+                        const existingMedicine = await this.medicineRepositor.findOne({
+                            where: { id: rxMedicineDto.medicineId },
+                        });
+
+                        if (existingMedicine) {
+                            Object.assign(existingMedicine, rxMedicineDto.medicine);
+                            savedMedicine = await this.medicineRepositor.save(existingMedicine);
+                        } else {
+                            savedMedicine = await this.medicineRepositor.save(
+                                this.medicineRepositor.create(rxMedicineDto.medicine)
+                            );
+                        }
+                    } else {
+                        savedMedicine = await this.medicineRepositor.save(
+                            this.medicineRepositor.create(rxMedicineDto.medicine)
+                        );
                     }
-                }else {
-                    const newMedicine = this.rxMedicineRepository.create({
-                        ...medicineDto,
-                        patientsrx: patient
-                    })
-                    const savedMedicine = await this.rxMedicineRepository.save(newMedicine);
-                    updateMedicines.push(savedMedicine)
+
+                    // Set the relation properly
+                    existingMedicineRx.medicine = savedMedicine;
+                    await this.rxMedicineRepository.save(existingMedicineRx);
+                    updateMedicinesRx.push(existingMedicineRx);
+                }
+            } else {
+                const newRxMedicine = this.rxMedicineRepository.create({
+                    ...rxMedicineDto,
+                    patientsrx: patient,
+                });
+
+                if (rxMedicineDto.medicineId) {
+                    const existingMedicine = await this.medicineRepositor.findOne({
+                        where: { id: rxMedicineDto.medicineId },
+                    });
+
+                    if (existingMedicine) {
+                        newRxMedicine.medicine = existingMedicine;
+                    } else {
+                        const newMedicine = this.medicineRepositor.create(rxMedicineDto.medicine);
+                        savedMedicine = await this.medicineRepositor.save(newMedicine);
+                        newRxMedicine.medicine = savedMedicine;
+                    }
+                } else {
+                    const newMedicine = this.medicineRepositor.create(rxMedicineDto.medicine);
+                    savedMedicine = await this.medicineRepositor.save(newMedicine);
+                    newRxMedicine.medicine = savedMedicine;
                 }
 
+                const savedRxMedicine = await this.rxMedicineRepository.save(newRxMedicine);
+                updateMedicinesRx.push(savedRxMedicine);
             }
-            patient.rxmedicine = updateMedicines;
-           }
-           
         }
+
+        patient.rxmedicine = updateMedicinesRx;
+    }
 
         //examination start
 

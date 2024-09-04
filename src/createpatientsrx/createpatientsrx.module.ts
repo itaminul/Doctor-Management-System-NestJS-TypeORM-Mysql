@@ -8,9 +8,10 @@ import { Rxexaminations } from 'src/entitys/rxexaminations';
 import { RxInvestigations } from 'src/entitys/rxinvestigations';
 import { RxAdvice } from 'src/entitys/rxadvice';
 import { Rxcomplains } from 'src/entitys/rxcomplains';
+import { Medicine } from 'src/entitys/medicine';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Patientsrx, Rxmedicine, Rxexaminations, RxInvestigations, RxAdvice, Rxcomplains])],
+  imports: [TypeOrmModule.forFeature([Patientsrx, Rxmedicine, Rxexaminations, RxInvestigations, RxAdvice, Rxcomplains, Medicine])],
   providers: [CreatepatientsrxService],
   controllers: [CreatepatientsrxController]
 })

@@ -1,12 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Patientsrx } from './patientsrx';
+import { Medicine } from './medicine';
 
 @Entity('rxmedicine')
 export class Rxmedicine {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column({ nullable: true })
-  medicineId: number;
   @Column({ nullable: true })
   doses: string
   @Column({ nullable: true })
@@ -29,4 +28,14 @@ export class Rxmedicine {
   })
   @JoinColumn({ name: 'patientsrxid' }) 
   patientsrx: Patientsrx
+
+  @ManyToOne(() => Medicine, (medicine) => medicine.rxMedicine, {
+    nullable: true,
+    onDelete: 'CASCADE'
+  })
+  @JoinColumn({ name: 'medicineId' }) 
+  medicine: Medicine
+  
+  
+  
 }
