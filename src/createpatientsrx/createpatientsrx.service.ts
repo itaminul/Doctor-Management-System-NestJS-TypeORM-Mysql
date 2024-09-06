@@ -43,38 +43,41 @@ export class CreatepatientsrxService {
     }
 
     async create (@Body() createPatientDto: CreatePatientsRxDTO) {
-        console.log("createPatientDto", createPatientDto);
+        // console.log("createPatientDto", createPatientDto);
         const {rxmedicine, rxexaminations, rxInvestigations, rxadvice, rxComplains, ...patientData} = createPatientDto;   
         const patientDataa = this.patientRxRepository.create(patientData);
         const savePatientRx = await this.patientRxRepository.save(patientDataa);
-
+        const medicineMap = new Map<number, Medicine>();
         for (const medicineDto of rxmedicine) {
             let medicine;
             
             if (medicineDto.medicineId) {
-              // Find the existing Medicine by ID
-              medicine = await this.medicineRepositor.findOne({ where: { id: medicineDto.medicineId } });
-      
-              if (!medicine) {
-                throw new Error(`Medicine with id ${medicineDto.medicineId} not found`);
-              }
-            } else {
-              // Create a new Medicine if needed
-              medicine = this.medicineRepositor.create(medicineDto);
-              medicine = await this.medicineRepositor.save(medicine);
-            }
+                // Check if the medicine is already processed
+                if (medicineMap.has(medicineDto.medicineId)) {
+                    medicine = medicineMap.get(medicineDto.medicineId);
+                } else {
+                    // Find the existing Medicine by ID
+                    medicine = await this.medicineRepositor.findOne({ where: { id: medicineDto.medicineId } });
         
-
-        const rxMdicines = rxmedicine.map(medicineDto => {
+                    if (!medicine) {
+                        throw new Error(`Medicine with id ${medicineDto.medicineId} not found`);
+                    }
+        
+                    medicineMap.set(medicineDto.medicineId, medicine);
+                }
+            } else {
+                // Create a new Medicine if needed
+                medicine = this.medicineRepositor.create(medicineDto);
+                medicine = await this.medicineRepositor.save(medicine);
+                medicineMap.set(medicine.id, medicine);
+            }
             const rmedicine  = this.rxMedicineRepository.create({
                 ...medicineDto,
                 patientsrx: savePatientRx,
-                medicine
+                medicine:medicine
             })
-            return rmedicine;
-        })
     
-        await this.rxMedicineRepository.save(rxMdicines);
+        await this.rxMedicineRepository.save(rmedicine);
     }
 
         const examinations = rxexaminations.map(examinationDto => {
