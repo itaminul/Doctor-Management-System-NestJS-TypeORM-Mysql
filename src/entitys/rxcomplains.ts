@@ -1,12 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Patientsrx } from './patientsrx';
+import { Complains } from './complains';
 
 @Entity('rxComplains')
 export class Rxcomplains {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column({ nullable: true})
-  complainId: number;
   @Column({ default: 1 })
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
@@ -21,4 +20,12 @@ export class Rxcomplains {
   })
   @JoinColumn({ name: 'patientsrxid' }) 
   patientsrx: Patientsrx
+
+  @ManyToOne(() => Complains, (complains) => complains.rxComplains, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'complainId' })
+  complains: Complains; // Corrected type to Complains
+
 }
