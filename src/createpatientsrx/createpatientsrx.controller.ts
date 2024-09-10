@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Put, UseInterceptors } from '@nestjs/common';
 import { CreatepatientsrxService } from './createpatientsrx.service';
 import { CreatePatientsRxDTO } from './dto/patientrx.dto';
 import { UpdatePatientsRxDTO } from './dto/updatePatientrx.dto';
@@ -8,71 +8,20 @@ export class CreatepatientsrxController {
     constructor(
         public readonly createPatientService: CreatepatientsrxService
     ){}
-
-
     @Get()
     async getAll() {
-      try {
         const results = await this.createPatientService.getAll();
-        return {
-          success: true,
-          statusCode: HttpStatus.OK,
-          message: "Show successfully",
-          data: results
-        }
-      } catch (error) {
-        if (error instanceof HttpException) {
-          throw error;
-        } else {
-          throw new HttpException(
-            "Failed to create prescription",
-            HttpStatus.INTERNAL_SERVER_ERROR
-          );
-        }
-      }
+        return results;
     }
 
     @Post()
     async create(@Body() createPatientRxDto: CreatePatientsRxDTO) {
-        try {
-            const results = await this.createPatientService.create(createPatientRxDto);
-            return {
-              success: true,
-              statusCode: HttpStatus.OK,
-              message: "Prescription Createded successfully",
-              data: results,
-            };
-          } catch (error) {
-            if (error instanceof HttpException) {
-              throw error;
-            } else {
-              throw new HttpException(
-                "Failed to create prescription",
-                HttpStatus.INTERNAL_SERVER_ERROR
-              );
-            }
-          }
+        return await this.createPatientService.create(createPatientRxDto);
+
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() updatePatientsRxDTO:UpdatePatientsRxDTO) {
-      try {
-        const results = await this.createPatientService.update(id,updatePatientsRxDTO);
-        return {
-          success: true,
-          statusCode: HttpStatus.OK,
-          message: "Prescription updated successfully",
-          data: results,
-        };
-      } catch (error) {
-        if (error instanceof HttpException) {
-          throw error;
-        } else {
-          throw new HttpException(
-            "Failed to updated prescription",
-            HttpStatus.INTERNAL_SERVER_ERROR
-          );
-        }
-      }
+    async update(@Param('id') id: number, @Body() updatePatientsRxDTO:UpdatePatientsRxDTO) {     
+        return await this.createPatientService.update(id,updatePatientsRxDTO);
     }
 }

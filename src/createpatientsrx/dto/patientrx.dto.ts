@@ -1,5 +1,5 @@
 import { Type } from "class-transformer"
-import { IsArray, IsNumber, IsString, ValidateNested } from "class-validator"
+import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from "class-validator"
 import { CreateRxExaminationDTO } from "./rxexamination.dto"
 import { CreateRxMedicineDTO } from "./rxmedicine.dto"
 import { CreateRxInvestigationDTO } from "./rxinvestigation.dto"
@@ -10,6 +10,7 @@ import { CreateRxComplainsDTO } from "./rxcomplains.dto"
 export class CreatePatientsRxDTO {
     @IsNumber()
     id: number
+    @IsNotEmpty()
     @IsString()
     RXDATE: string
     @IsNumber()

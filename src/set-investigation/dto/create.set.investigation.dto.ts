@@ -1,13 +1,13 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
-
+import { Type } from "class-transformer";
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
 export class SetInvestigationDto {
     @IsString()
     @IsNotEmpty()
     name: string
-    @IsString()
     @IsOptional()
+    @IsString()
     description: string
-    @IsString()
     @IsOptional()
+    @IsNumber()
     slNo: number;
 } 
