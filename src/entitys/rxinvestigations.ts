@@ -1,12 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Patientsrx } from './patientsrx';
+import { Set_investigations } from './set_investigations';
 
 @Entity('rxInvestigations')
 export class RxInvestigations {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column({ nullable: true})
-  investigationId: number;
   @Column({ default: 1 })
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
@@ -21,5 +20,13 @@ export class RxInvestigations {
   })
   @JoinColumn({ name: 'patientsrxid' }) 
   patientsrx: Patientsrx
+
+  @ManyToOne(() => Set_investigations, (setInv) => setInv.rxInvestigations, {
+    nullable: true,
+    onDelete: 'CASCADE'
+  }  )
+
+  @JoinColumn({ name: 'investigationId'})
+  setInvestigations: Set_investigations
 
 }
