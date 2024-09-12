@@ -9,16 +9,18 @@ import { RxInvestigations } from './entitys/rxinvestigations';
 import { RxAdvice } from './entitys/rxadvice';
 import { Rxcomplains } from './entitys/rxcomplains';
 import { Medicine } from './entitys/medicine';
+import { Complains } from './entitys/complains';
+import { Set_investigations } from './entitys/set_investigations';
 
 export const AppDataSource:DataSourceOptions = {
   type: 'mysql',
-  host: '192.168.0.89',
+  host: '192.168.0.106',
   port: 3306,
-  username: 'qmsdrmakbul',         // Update with your MySQL username
-  password: 'Qmsdrmakbul24#',     // Update with your MySQL password
-  database: 'qmsdrmakbul_db',  // Update with your MySQL database name
-  entities: [Usertable, Test, PatPatientsInformation, Patientsrx, Rxmedicine, Rxexaminations, RxInvestigations, RxAdvice, Rxcomplains, Medicine],         // Add your entities here
-  synchronize: true,        // Set to false in production
+  username: 'qms_uat',         // Update with your MySQL username
+  password: 'qms_uat',     // Update with your MySQL password
+  database: 'qms_uat',  // Update with your MySQL database name
+  entities: [Usertable, Test, PatPatientsInformation, Patientsrx, Rxmedicine, Rxexaminations, RxInvestigations, RxAdvice, Rxcomplains, Medicine, Complains, Set_investigations],         // Add your entities here
+  synchronize: false,        // Set to false in production
   logging: true,
 };
 

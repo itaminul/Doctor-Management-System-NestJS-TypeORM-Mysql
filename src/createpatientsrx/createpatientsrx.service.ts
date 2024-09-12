@@ -1,4 +1,4 @@
-import { Body, Injectable } from '@nestjs/common';
+import { Body, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Patientsrx } from 'src/entitys/patientsrx';
 import { Rxexaminations } from 'src/entitys/rxexaminations';
@@ -28,118 +28,179 @@ export class CreatepatientsrxService {
         @InjectRepository(Rxcomplains)
         public readonly rxComplainRepositor: Repository<Rxcomplains>,
         @InjectRepository(Medicine)
-        public readonly medicineRepositor: Repository<Medicine>
+        public readonly medicineRepositor: Repository<Medicine>,
+        @InjectRepository(Set_investigations)
+        public readonly setInvestigationRepository: Repository<Set_investigations>
 
     ) {}
 
 
     
     async getAll() {
-        const data =  await this.patientRxRepository.find({
-            relations: {
-                rxmedicine: {
-                    medicine: true
-                },
-                rxInvestigations: {
-                    setInvestigations: true
-                },
-                rxexaminations: true
-            }
-        });
-        return data;
+        try {
+            const data =  await this.patientRxRepository.find({
+                relations: {
+                    rxmedicine: {
+                        medicine: true
+                    },
+                    rxInvestigations: {
+                        setInvestigations: true
+                    },
+                    rxexaminations: true
+                }
+            });
+            return data;
+        } catch (error) {
+                             // If error is already a HttpException, re-throw it
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      // For other errors (e.g., DB issues), throw a generic internal server error
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+            
+        }
     }
 
     async create (@Body() createPatientDto: CreatePatientsRxDTO) {
-        const {rxmedicine, rxexaminations, rxInvestigations, rxadvice, rxComplains, ...patientData} = createPatientDto;   
-        const patientDataa = this.patientRxRepository.create(patientData);
-        const savePatientRx = await this.patientRxRepository.save(patientDataa);
-        const medicineMap = new Map<number, Medicine>();
-        const investigationMap = new Map<number, Set_investigations>();
-        for (const medicineDto of rxmedicine) {
-            let medicine;
+        try {
+            const {rxmedicine, rxexaminations, rxInvestigations, rxadvice, rxComplains, ...patientData} = createPatientDto;   
+            const patientDataa = this.patientRxRepository.create(patientData);
+            const savePatientRx = await this.patientRxRepository.save(patientDataa);
+            const medicineMap = new Map<number, Medicine>();
+            const investigationMap = new Map<number, Set_investigations>();
+            for (const medicineDto of rxmedicine) {
+                let medicine: any;
+                
+                if (medicineDto.medicineId) {
+                    // Check if the medicine is already processed
+                    if (medicineMap.has(medicineDto.medicineId)) {
+                        medicine = medicineMap.get(medicineDto.medicineId);
+                    } else {
+                        // Find the existing Medicine by ID
+                        medicine = await this.medicineRepositor.findOne({ where: { id: medicineDto.medicineId } });
             
-            if (medicineDto.medicineId) {
-                // Check if the medicine is already processed
-                if (medicineMap.has(medicineDto.medicineId)) {
-                    medicine = medicineMap.get(medicineDto.medicineId);
+                        if (!medicine) {
+                            throw new Error(`Medicine with id ${medicineDto.medicineId} not found`);
+                        }
+            
+                        medicineMap.set(medicineDto.medicineId, medicine);
+                    }
                 } else {
-                    // Find the existing Medicine by ID
-                    medicine = await this.medicineRepositor.findOne({ where: { id: medicineDto.medicineId } });
+                    // Create a new Medicine if needed
+                    medicine = this.medicineRepositor.create(medicineDto);
+                    medicine = await this.medicineRepositor.save(medicine);
+                    medicineMap.set(medicine.id, medicine);
+                }
+                const rmedicine  = this.rxMedicineRepository.create({
+                    ...medicineDto,
+                    patientsrx: savePatientRx,
+                    medicine:medicine
+                })
         
-                    if (!medicine) {
-                        throw new Error(`Medicine with id ${medicineDto.medicineId} not found`);
+            await this.rxMedicineRepository.save(rmedicine);
+        }
+    
+    
+            //investigation
+            for(const rxInvestigationsDto of rxInvestigations  ) {
+                let setInvestigation: any;
+                if(rxInvestigationsDto.investigationId) {
+                    if(investigationMap.has(rxInvestigationsDto.investigationId)) {
+                        setInvestigation = investigationMap.get(rxInvestigationsDto.investigationId)
+                    }else{
+                        setInvestigation = await this.setInvestigationRepository.findOne({ where: { id: rxInvestigationsDto.investigationId}})
+                    }
+    
+                    if (!setInvestigation) {
+                        throw new Error(`Medicine with id ${rxInvestigationsDto.investigationId} not found`);
                     }
         
-                    medicineMap.set(medicineDto.medicineId, medicine);
+    
+                    investigationMap.set(rxInvestigationsDto.investigationId, setInvestigation)
+                }else{
+                    setInvestigation = this.rxInvestigationsRepository.create(rxInvestigationsDto)
+                    setInvestigation = await this.setInvestigationRepository.save(setInvestigation)
+                    investigationMap.set(setInvestigation.id, setInvestigation)
+              }     
+               const investigation = this.rxInvestigationsRepository.create({
+                        ...rxInvestigationsDto,
+                        patientsrx: savePatientRx,
+                        setInvestigations:setInvestigation
+                    })
+                await this.rxInvestigationsRepository.save(investigation);
+    
+    
+    
+            }
+    
+            // const investigations = rxInvestigations.map(investigationDto => {
+    
+            //     const investigation = this.rxInvestigationsRepository.create({
+            //         ...rxInvestigations,
+            //         patientsrx: savePatientRx
+            //     })
+            //     return investigation;
+            // })
+            // await this.rxInvestigationsRepository.save(investigations);
+    
+    
+    
+        
+            //rxComplains
+            for(const complainDto of rxComplains){
+                if(complainDto.id) {
+    
                 }
-            } else {
-                // Create a new Medicine if needed
-                medicine = this.medicineRepositor.create(medicineDto);
-                medicine = await this.medicineRepositor.save(medicine);
-                medicineMap.set(medicine.id, medicine);
-            }
-            const rmedicine  = this.rxMedicineRepository.create({
-                ...medicineDto,
-                patientsrx: savePatientRx,
-                medicine:medicine
-            })
     
-        await this.rxMedicineRepository.save(rmedicine);
-    }
-
-
-        //investigation
-        const investigations = rxInvestigations.map(investigationDto => {
-            
-            const investigation = this.rxInvestigationsRepository.create({
-                ...investigationDto,
-                patientsrx: savePatientRx,
+            const rxcomplain = rxComplains.map(rxComplainDto => {
+                const complain = this.rxComplainRepositor.create({
+                    ...rxComplainDto,
+                    patientsrx: savePatientRx
+                })
+                return complain;
             })
-            return investigation;
-        })
-        await this.rxInvestigationsRepository.save(investigations);
-
-
+            await this.rxComplainRepositor.save(rxcomplain)
+        }
     
-        //rxComplains
-        for(const complainDto of rxComplains){
-            if(complainDto.id) {
-
-            }
-
-        const rxcomplain = rxComplains.map(rxComplainDto => {
-            const complain = this.rxComplainRepositor.create({
-                ...rxComplainDto,
+    
+    
+            const examinations = rxexaminations.map(examinationDto => {
+                const examination = this.rxExaminationsRepository.create({
+                    ...examinationDto,
+                    patientsrx: savePatientRx,
+                })
+                return examination;
+            })
+            await this.rxExaminationsRepository.save(examinations);
+    
+    
+            //rxadvice
+            const rxadvices = rxadvice.map(rxAdviceDto => {
+               const advice = this.rxAdviceRepository.create({
+                ...rxAdviceDto,
                 patientsrx: savePatientRx
+               })
+               return advice;
             })
-            return complain;
-        })
-        await this.rxComplainRepositor.save(rxcomplain)
-    }
+            await this.rxAdviceRepository.save(rxadvices)
+         
+            return savePatientRx;
+        } catch (error) {
+                 // If error is already a HttpException, re-throw it
+      if (error instanceof HttpException) {
+        throw error;
+      }
 
-
-
-        const examinations = rxexaminations.map(examinationDto => {
-            const examination = this.rxExaminationsRepository.create({
-                ...examinationDto,
-                patientsrx: savePatientRx,
-            })
-            return examination;
-        })
-        await this.rxExaminationsRepository.save(examinations);
-
-
-        //rxadvice
-        const rxadvices = rxadvice.map(rxAdviceDto => {
-           const advice = this.rxAdviceRepository.create({
-            ...rxAdviceDto,
-            patientsrx: savePatientRx
-           })
-           return advice;
-        })
-        await this.rxAdviceRepository.save(rxadvices)
-     
-        return savePatientRx;
+      // For other errors (e.g., DB issues), throw a generic internal server error
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+        }
 
     }
 
@@ -147,6 +208,8 @@ export class CreatepatientsrxService {
 
 
     async update(id: number, updatePatientsRxDTO:UpdatePatientsRxDTO ) {
+        try {
+            
         const { rxmedicine, rxexaminations, rxInvestigations, rxAdvice, rxComplains, ...patientData } = updatePatientsRxDTO;
         const patient = await this.patientRxRepository.findOne({
             where: {id},
@@ -354,11 +417,21 @@ export class CreatepatientsrxService {
                 }
             }
             patient.rxComplains = updateComplains;
-        }
-    
+        }  
         
-
-
         return this.patientRxRepository.save(patient)
+        } catch (error) {
+                             // If error is already a HttpException, re-throw it
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      // For other errors (e.g., DB issues), throw a generic internal server error
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+            
+        }
     }
 }
