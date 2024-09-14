@@ -11,7 +11,6 @@ export class MedicineService {
 ) {}
 
 async create(@Body() createMedicineDTO:CreateMedicineDTO) {
-    console.log("medicine", createMedicineDTO);
     const {...medicine} = createMedicineDTO;
     
     const medicineData =  this.medicineRepository.create(medicine)

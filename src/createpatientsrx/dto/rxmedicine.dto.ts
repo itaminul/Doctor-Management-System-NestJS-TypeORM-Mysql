@@ -3,6 +3,7 @@ import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from "class-v
 import { CreateMedicineDTO } from "src/medicine/dto/create.medicine.dto"
 
 export class CreateRxMedicineDTO {
+    @IsOptional()
     @IsNumber()
     id: number
     @IsOptional()
@@ -12,6 +13,7 @@ export class CreateRxMedicineDTO {
     @IsString()
     doses: string
     @IsNumber()
+    @IsOptional()
     isContinue: number
     @IsOptional()
     @IsString()
@@ -20,8 +22,8 @@ export class CreateRxMedicineDTO {
     @IsString()
     remarks: string
 
-    @IsArray()
+    @IsOptional()
     @ValidateNested()
     @Type(() => CreateMedicineDTO)
-    medicine: CreateMedicineDTO
+    medicine?: CreateMedicineDTO
 }

@@ -9,7 +9,7 @@ import {
   } from '@nestjs/common';
   import { Observable, throwError } from 'rxjs';
   import { catchError, map } from 'rxjs/operators';
-  //import { format } from 'date-fns';
+  import { format } from 'date-fns';
   
   export type Response<T> = {
     status: boolean;
@@ -18,7 +18,7 @@ import {
     message: string;
     data?: T;
     errors?: any; // Capture errors if present
-   // timestamp: string;
+    timestamp: string;
   };
   
   @Injectable()
@@ -48,7 +48,7 @@ import {
         path: request.url,
         message: 'Validation failed',
         errors: responseBody.errors, // Include validation errors
-       // timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+        timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
       });
     }
   
@@ -63,7 +63,7 @@ import {
         statusCode: status,
         path: request.url,
         message: exception.message,
-       // timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+        timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
       });
     }
   
@@ -78,7 +78,7 @@ import {
         path: request.url,
         message: 'Request successful',
         data: res,
-      //  timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+        timestamp: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
       };
     }
   }

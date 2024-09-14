@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { Rxmedicine } from './rxmedicine';
 
 @Entity('medicine')
@@ -7,18 +14,18 @@ export class Medicine {
   id: number;
   @Column()
   medicineName: string;
-  @Column({ nullable: true})
-  slNo: number
-  @Column({ nullable: true})
-  description: string
-  @Column({ nullable: true})
-  medicineGenericeId: number
-  @Column({ nullable: true})
-  manufacturerId: number
-  @Column({ nullable: true})
-  categoryId: number
-  @Column({ nullable: true})
-  strength: string
+  @Column({ nullable: true })
+  slNo: number;
+  @Column({ nullable: true })
+  description: string;
+  @Column({ nullable: true })
+  medicineGenericeId: number;
+  @Column({ nullable: true })
+  manufacturerId: number;
+  @Column({ nullable: true })
+  categoryId: number;
+  @Column({ nullable: true })
+  strength: string;
   @Column({ default: 1 })
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
@@ -32,6 +39,5 @@ export class Medicine {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'medicineId' })
-  rxMedicine: Rxmedicine[];  // This should be a single Medicine object
-
+  rxMedicine: Rxmedicine[]; // This should be a single Medicine object
 }

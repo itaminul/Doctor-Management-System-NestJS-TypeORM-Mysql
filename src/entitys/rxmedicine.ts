@@ -37,5 +37,4 @@ export class Rxmedicine {
   medicine: Medicine
   
   
-  
 }

@@ -1,11 +1,14 @@
-import { Type } from "class-transformer";
-import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator"
+import { IsNumber, IsOptional, IsString } from "class-validator"
 
 export class CreateMedicineDTO {
-    @IsNumber()
-    id: number
-    @IsString()
     @IsOptional()
+    @IsNumber()
+    id: number   
+    @IsOptional()
+    @IsNumber()
+    medicineId?: number;
+    @IsOptional()  
+    @IsString()
     medicineName: string;
     @IsNumber()
     @IsOptional()

@@ -20,8 +20,5 @@ export class CreatepatientsrxController {
 
     }
 
-    @Put(':id')
-    async update(@Param('id') id: number, @Body() updatePatientsRxDTO:UpdatePatientsRxDTO) {     
-        return await this.createPatientService.update(id,updatePatientsRxDTO);
-    }
+
 }

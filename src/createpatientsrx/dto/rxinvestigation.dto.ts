@@ -4,12 +4,13 @@ import { SetInvestigationDto } from "src/set-investigation/dto/create.set.invest
 
 export class CreateRxInvestigationDTO {
     @IsNumber()
-    id: number
+    @IsOptional()
+    id?: number
     @IsNumber()
     @IsOptional()
-    investigationId: number
+    investigationId?: number
     
-    @IsArray()
+    @IsOptional()
     @ValidateNested()
     @Type(() => SetInvestigationDto)
     setInvestigation: SetInvestigationDto

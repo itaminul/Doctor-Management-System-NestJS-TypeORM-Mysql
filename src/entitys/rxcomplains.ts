@@ -21,11 +21,11 @@ export class Rxcomplains {
   @JoinColumn({ name: 'patientsrxid' }) 
   patientsrx: Patientsrx
 
-  @ManyToOne(() => Complains, (complains) => complains.rxComplains, {
+  @ManyToOne(() => Complains, (complain) => complain.rxComplains, {
     nullable: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'complainId' })
-  complains: Complains; // Corrected type to Complains
+  complains: Complains; 
 
 }
