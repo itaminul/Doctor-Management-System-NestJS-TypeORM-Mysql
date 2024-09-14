@@ -9,7 +9,7 @@ import { Rxcomplains } from './rxcomplains';
 export class Patientsrx {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column()
+  @Column({ nullable: false})
   RXDATE: string;
   @Column({nullable: true})
   followUp: number;

@@ -51,12 +51,10 @@ export class CreatepatientsrxService {
             });
             return data;
         } catch (error) {
-                             // If error is already a HttpException, re-throw it
       if (error instanceof HttpException) {
         throw error;
       }
 
-      // For other errors (e.g., DB issues), throw a generic internal server error
       throw new HttpException(
         'Internal server error',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -72,6 +70,7 @@ export class CreatepatientsrxService {
             const savePatientRx = await this.patientRxRepository.save(patientDataa);
             const medicineMap = new Map<number, Medicine>();
             const investigationMap = new Map<number, Set_investigations>();
+            if(rxmedicine && rxmedicine.length > 0){
             for (const medicineDto of rxmedicine) {
                 let medicine: any;
                 
@@ -103,9 +102,10 @@ export class CreatepatientsrxService {
         
             await this.rxMedicineRepository.save(rmedicine);
         }
-    
+    }    
     
             //investigation
+            if(rxInvestigations && rxInvestigations.length > 0){
             for(const rxInvestigationsDto of rxInvestigations  ) {
                 let setInvestigation: any;
                 if(rxInvestigationsDto.investigationId) {
@@ -136,6 +136,7 @@ export class CreatepatientsrxService {
     
     
             }
+        }
     
             // const investigations = rxInvestigations.map(investigationDto => {
     
@@ -145,16 +146,11 @@ export class CreatepatientsrxService {
             //     })
             //     return investigation;
             // })
-            // await this.rxInvestigationsRepository.save(investigations);
-    
-    
-    
+            // await this.rxInvestigationsRepository.save(investigations);   
+      
         
             //rxComplains
-            for(const complainDto of rxComplains){
-                if(complainDto.id) {
-    
-                }
+            if(rxComplains && rxComplains.length > 0){
     
             const rxcomplain = rxComplains.map(rxComplainDto => {
                 const complain = this.rxComplainRepositor.create({
@@ -165,9 +161,10 @@ export class CreatepatientsrxService {
             })
             await this.rxComplainRepositor.save(rxcomplain)
         }
+        
     
     
-    
+        if(rxexaminations && rxexaminations.length > 0){
             const examinations = rxexaminations.map(examinationDto => {
                 const examination = this.rxExaminationsRepository.create({
                     ...examinationDto,
@@ -176,9 +173,11 @@ export class CreatepatientsrxService {
                 return examination;
             })
             await this.rxExaminationsRepository.save(examinations);
+        }
     
     
             //rxadvice
+            if(rxadvice && rxadvice.length > 0){
             const rxadvices = rxadvice.map(rxAdviceDto => {
                const advice = this.rxAdviceRepository.create({
                 ...rxAdviceDto,
@@ -187,6 +186,7 @@ export class CreatepatientsrxService {
                return advice;
             })
             await this.rxAdviceRepository.save(rxadvices)
+        }
          
             return savePatientRx;
         } catch (error) {
@@ -421,12 +421,10 @@ export class CreatepatientsrxService {
         
         return this.patientRxRepository.save(patient)
         } catch (error) {
-                             // If error is already a HttpException, re-throw it
       if (error instanceof HttpException) {
         throw error;
       }
 
-      // For other errors (e.g., DB issues), throw a generic internal server error
       throw new HttpException(
         'Internal server error',
         HttpStatus.INTERNAL_SERVER_ERROR,

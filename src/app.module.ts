@@ -9,6 +9,7 @@ import { MedicineModule } from './medicine/medicine.module';
 import { ComplainModule } from './complain/complain.module';
 import { SetInvestigationModule } from './set-investigation/set-investigation.module';
 
+
 @Module({
   imports: [ TypeOrmModule.forRoot(AppDataSource), CreatepatientsrxModule, MedicineModule, ComplainModule, SetInvestigationModule],
   controllers: [AppController],

@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { Patientsrx } from './patientsrx';
 import { Rxcomplains } from './rxcomplains';
 
@@ -6,12 +13,12 @@ import { Rxcomplains } from './rxcomplains';
 export class Complains {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column({ nullable: false})
+  @Column({ nullable: false })
   name: string;
-  @Column({ nullable: false})
-  slNo: number
-  @Column({ nullable: true})
-  description: string
+  @Column({ nullable: false })
+  slNo: number;
+  @Column({ nullable: true })
+  description: string;
   @Column({ default: 1 })
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
@@ -27,5 +34,4 @@ export class Complains {
   })
   @JoinColumn({ name: 'complainId' })
   rxComplains: Rxcomplains[];
-
 }
