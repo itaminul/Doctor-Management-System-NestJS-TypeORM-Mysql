@@ -3,13 +3,14 @@ import { IsArray, IsNumber, IsOptional, ValidateNested } from "class-validator"
 import { CreateComplainDTO } from "src/complain/dto/create.complain.dto"
 
 export class CreateRxComplainsDTO {
-     @IsOptional()
+    @IsOptional()
     @IsNumber()
     id?: number
     @IsNumber()
     updated_by: number
+
     @IsArray()
     @ValidateNested()
     @Type(() => CreateComplainDTO)
-    complains: CreateComplainDTO
+    complains?: CreateComplainDTO
 }

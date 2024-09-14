@@ -8,10 +8,11 @@ import { CreatepatientsrxModule } from './createpatientsrx/createpatientsrx.modu
 import { MedicineModule } from './medicine/medicine.module';
 import { ComplainModule } from './complain/complain.module';
 import { SetInvestigationModule } from './set-investigation/set-investigation.module';
+import { SetupAdviceModule } from './setup-advice/setup-advice.module';
 
 
 @Module({
-  imports: [ TypeOrmModule.forRoot(AppDataSource), CreatepatientsrxModule, MedicineModule, ComplainModule, SetInvestigationModule],
+  imports: [ TypeOrmModule.forRoot(AppDataSource), CreatepatientsrxModule, MedicineModule, ComplainModule, SetInvestigationModule, SetupAdviceModule],
   controllers: [AppController],
   providers: [AppService],
 })

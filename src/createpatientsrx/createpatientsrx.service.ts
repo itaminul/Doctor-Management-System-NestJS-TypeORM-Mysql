@@ -11,6 +11,7 @@ import { RxAdvice } from 'src/entitys/rxadvice';
 import { Rxcomplains } from 'src/entitys/rxcomplains';
 import { Medicine } from 'src/entitys/medicine';
 import { Set_investigations } from 'src/entitys/set_investigations';
+import { Complains } from 'src/entitys/complains';
 
 @Injectable()
 export class CreatepatientsrxService {
@@ -30,7 +31,9 @@ export class CreatepatientsrxService {
         @InjectRepository(Medicine)
         public readonly medicineRepositor: Repository<Medicine>,
         @InjectRepository(Set_investigations)
-        public readonly setInvestigationRepository: Repository<Set_investigations>
+        public readonly setInvestigationRepository: Repository<Set_investigations>,
+        @InjectRepository(Complains)
+        public readonly setComplainRepository: Repository<Complains>
 
     ) {}
 
@@ -46,7 +49,13 @@ export class CreatepatientsrxService {
                     rxInvestigations: {
                         setInvestigations: true
                     },
-                    rxexaminations: true
+                    rxexaminations: true,
+                    rxComplains: {
+                        complains: true
+                    }
+                },
+                order: {
+                    id: 'DESC'
                 }
             });
             return data;
@@ -70,6 +79,7 @@ export class CreatepatientsrxService {
             const savePatientRx = await this.patientRxRepository.save(patientDataa);
             const medicineMap = new Map<number, Medicine>();
             const investigationMap = new Map<number, Set_investigations>();
+            const complainMap = new Map<number, Complains>();
             if(rxmedicine && rxmedicine.length > 0){
             for (const medicineDto of rxmedicine) {
                 let medicine: any;
@@ -151,17 +161,36 @@ export class CreatepatientsrxService {
         
             //rxComplains
             if(rxComplains && rxComplains.length > 0){
-    
-            const rxcomplain = rxComplains.map(rxComplainDto => {
-                const complain = this.rxComplainRepositor.create({
-                    ...rxComplainDto,
-                    patientsrx: savePatientRx
-                })
-                return complain;
-            })
-            await this.rxComplainRepositor.save(rxcomplain)
+                for(const rxComplainDto of rxComplains) {
+                    let setRxComplain: any;
+                    if(rxComplainDto.complainId) {
+                        if(complainMap.has(rxComplainDto.complainId)) {
+
+                            setRxComplain = complainMap.get(rxComplainDto.complainId)
+                        }else{
+                            setRxComplain = await this.setComplainRepository.findOne({ where: {id: rxComplainDto.complainId}})
+                        }
+
+                        if(!complainMap) {
+                            throw new Error(`Complain with id ${rxComplainDto.complainId} not found`)
+                        }
+                        complainMap.set(rxComplainDto.complainId, setRxComplain)
+                    }else{
+                        setRxComplain = this.rxComplainRepositor.create(rxComplainDto)
+                        setRxComplain = await this.setComplainRepository.save(setRxComplain)
+                        complainMap.set(setRxComplain.id, setRxComplain)
+                    }                  
+                        const complain = this.rxComplainRepositor.create({
+                            ...rxComplainDto,
+                            patientsrx: savePatientRx,
+                            complains: setRxComplain   
+                        })                       
+                    
+                    await this.rxComplainRepositor.save(complain)
+                }   
+
         }
-        
+               
     
     
         if(rxexaminations && rxexaminations.length > 0){

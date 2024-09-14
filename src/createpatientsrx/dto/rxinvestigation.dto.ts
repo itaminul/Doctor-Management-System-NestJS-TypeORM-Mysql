@@ -13,5 +13,5 @@ export class CreateRxInvestigationDTO {
     @IsOptional()
     @ValidateNested()
     @Type(() => SetInvestigationDto)
-    setInvestigation: SetInvestigationDto
+    setInvestigation?: SetInvestigationDto
 }
