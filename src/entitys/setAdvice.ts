@@ -26,7 +26,6 @@ export class SetAdvice{
         nullable: true,
         onDelete: 'CASCADE'
     })
-
     @JoinColumn({ name: 'adviceId'})
     rxAdvice: RxAdvice[]
 }

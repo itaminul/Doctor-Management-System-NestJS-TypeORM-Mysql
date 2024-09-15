@@ -12,6 +12,7 @@ import { Rxcomplains } from 'src/entitys/rxcomplains';
 import { Medicine } from 'src/entitys/medicine';
 import { Set_investigations } from 'src/entitys/set_investigations';
 import { Complains } from 'src/entitys/complains';
+import { SetAdvice } from 'src/entitys/setAdvice';
 
 @Injectable()
 export class CreatepatientsrxService {
@@ -33,7 +34,9 @@ export class CreatepatientsrxService {
         @InjectRepository(Set_investigations)
         public readonly setInvestigationRepository: Repository<Set_investigations>,
         @InjectRepository(Complains)
-        public readonly setComplainRepository: Repository<Complains>
+        public readonly setComplainRepository: Repository<Complains>,
+        @InjectRepository(SetAdvice)
+        public readonly setAdviceRepository: Repository<SetAdvice>
 
     ) {}
 
@@ -52,6 +55,9 @@ export class CreatepatientsrxService {
                     rxexaminations: true,
                     rxComplains: {
                         complains: true
+                    },
+                    rxAdvice: {
+                        setAdvice: true
                     }
                 },
                 order: {
@@ -80,6 +86,7 @@ export class CreatepatientsrxService {
             const medicineMap = new Map<number, Medicine>();
             const investigationMap = new Map<number, Set_investigations>();
             const complainMap = new Map<number, Complains>();
+            const setAdviceMap = new Map<number, SetAdvice>();
             if(rxmedicine && rxmedicine.length > 0){
             for (const medicineDto of rxmedicine) {
                 let medicine: any;
@@ -161,6 +168,7 @@ export class CreatepatientsrxService {
         
             //rxComplains
             if(rxComplains && rxComplains.length > 0){
+
                 for(const rxComplainDto of rxComplains) {
                     let setRxComplain: any;
                     if(rxComplainDto.complainId) {
@@ -207,24 +215,43 @@ export class CreatepatientsrxService {
     
             //rxadvice
             if(rxadvice && rxadvice.length > 0){
-            const rxadvices = rxadvice.map(rxAdviceDto => {
-               const advice = this.rxAdviceRepository.create({
+                for(const rxAdviceDto of rxadvice) {
+                    let setAdvice: any;
+                    if(rxAdviceDto.adviceId) {
+                        if(setAdviceMap.has(rxAdviceDto.adviceId)){
+                            setAdvice = setAdviceMap.has(rxAdviceDto.adviceId)
+                        }else{
+                            setAdvice = await this.setAdviceRepository.findOne({ where: {id: rxAdviceDto.adviceId}})
+                        }
+
+                        if(!setAdviceMap){
+                            throw new Error(`Advice ${rxAdviceDto.adviceId} not found`);
+                        }
+                        setAdviceMap.set(rxAdviceDto.adviceId, setAdvice)
+                    }else{
+                        setAdvice = this.rxAdviceRepository.create(rxAdviceDto);
+                        setAdvice = await this.setAdviceRepository.save(setAdvice)
+                        setAdviceMap.set(setAdvice.id, setAdvice);
+
+                    }
+                             
+               const advices = this.rxAdviceRepository.create({
                 ...rxAdviceDto,
-                patientsrx: savePatientRx
+                patientsrx: savePatientRx,
+                setAdvice:setAdvice
                })
-               return advice;
-            })
-            await this.rxAdviceRepository.save(rxadvices)
-        }
+               await this.rxAdviceRepository.save(advices)
+                }
+
+            }
+    
+        
          
             return savePatientRx;
-        } catch (error) {
-                 // If error is already a HttpException, re-throw it
+        } catch (error) {             
       if (error instanceof HttpException) {
         throw error;
       }
-
-      // For other errors (e.g., DB issues), throw a generic internal server error
       throw new HttpException(
         'Internal server error',
         HttpStatus.INTERNAL_SERVER_ERROR,

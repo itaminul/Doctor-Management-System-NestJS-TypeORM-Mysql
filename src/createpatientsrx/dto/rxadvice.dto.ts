@@ -14,5 +14,5 @@ export class CreateRxAdviceDTO {
     @IsArray()
     @ValidateNested()
     @Type(() => CreateSetupAdviceDto)
-    createSetupAdviceDto?: CreateSetupAdviceDto
+    createSetupAdviceDto?: CreateSetupAdviceDto[]
 }

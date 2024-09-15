@@ -39,5 +39,5 @@ export class Medicine {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'medicineId' })
-  rxMedicine: Rxmedicine[]; // This should be a single Medicine object
+  rxMedicine: Rxmedicine[]; 
 }
