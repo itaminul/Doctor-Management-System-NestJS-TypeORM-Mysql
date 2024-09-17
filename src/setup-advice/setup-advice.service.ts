@@ -6,26 +6,25 @@ import { CreateSetupAdviceDto } from './dto/create.advice.setup.dto';
 
 @Injectable()
 export class SetupAdviceService {
-   constructor(
+  constructor(
     @InjectRepository(SetAdvice)
-    public readonly setupAdviceRepository: Repository<SetAdvice>
-   ){}
+    public readonly setupAdviceRepository: Repository<SetAdvice>,
+  ) {}
 
-   async create(createSetupAdvice: CreateSetupAdviceDto) {
+  async create(createSetupAdvice: CreateSetupAdviceDto) {
     try {
-        const {...setupMedicine} = createSetupAdvice
-        const setupAdviceData = this.setupAdviceRepository.create(setupMedicine);
-        const saveData = await this.setupAdviceRepository.save(setupAdviceData);
-        return saveData;
+      const { ...setupMedicine } = createSetupAdvice;
+      const setupAdviceData = this.setupAdviceRepository.create(setupMedicine);
+      const saveData = await this.setupAdviceRepository.save(setupAdviceData);
+      return saveData;
     } catch (error) {
-        if(error instanceof HttpException) {
-            throw error;
-        }
-        throw new HttpException(
-            'internal server error',
-            HttpStatus.INTERNAL_SERVER_ERROR
-        )            
-        
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-   }
+  }
 }

@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Rxmedicine } from './rxmedicine';
 import { Rxexaminations } from './rxexaminations';
 import { RxInvestigations } from './rxinvestigations';
@@ -9,13 +15,13 @@ import { Rxcomplains } from './rxcomplains';
 export class Patientsrx {
   @PrimaryGeneratedColumn()
   id: number;
-  @Column({ nullable: false})
+  @Column({ nullable: false })
   RXDATE: string;
-  @Column({nullable: true})
+  @Column({ nullable: true })
   followUp: number;
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   rxStatus: number;
-  @Column({default: 1})
+  @Column({ default: 1 })
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
@@ -26,35 +32,43 @@ export class Patientsrx {
   @OneToMany(() => Rxmedicine, (rxmedicine) => rxmedicine.patientsrx, {
     nullable: true,
     onDelete: 'CASCADE',
-    eager: true
+    eager: true,
   })
-  rxmedicine: Rxmedicine[]
-  @OneToMany(() => Rxexaminations, (rxexaminations) => rxexaminations.patientsrx, {
-    nullable: true,
-    onDelete: 'CASCADE',
-    eager: true
-  })
-  rxexaminations: Rxexaminations[]
+  rxmedicine: Rxmedicine[];
 
-  @OneToMany(() => RxInvestigations, (rxInvestigation) => rxInvestigation.patientsrx, {
-    nullable: true,
-    onDelete: 'CASCADE',
-    eager: true
-  })
-  rxInvestigations: RxInvestigations[]
+  @OneToMany(
+    () => Rxexaminations,
+    (rxexaminations) => rxexaminations.patientsrx,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+      eager: true,
+    },
+  )
+  rxexaminations: Rxexaminations[];
+
+  @OneToMany(
+    () => RxInvestigations,
+    (rxInvestigation) => rxInvestigation.patientsrx,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+      eager: true,
+    },
+  )
+  rxInvestigations: RxInvestigations[];
 
   @OneToMany(() => RxAdvice, (rxAdvice) => rxAdvice.patientsrx, {
     nullable: true,
     onDelete: 'CASCADE',
-    eager: true
+    eager: true,
   })
-  rxAdvice: RxAdvice[]
+  rxAdvice: RxAdvice[];
 
   @OneToMany(() => Rxcomplains, (rxComplains) => rxComplains.patientsrx, {
     nullable: true,
     onDelete: 'CASCADE',
-    eager: true
+    eager: true,
   })
-  rxComplains: Rxcomplains[]
-  
+  rxComplains: Rxcomplains[];
 }

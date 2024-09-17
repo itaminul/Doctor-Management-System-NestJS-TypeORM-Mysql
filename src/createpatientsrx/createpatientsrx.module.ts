@@ -12,10 +12,25 @@ import { Medicine } from 'src/entitys/medicine';
 import { Set_investigations } from 'src/entitys/set_investigations';
 import { Complains } from 'src/entitys/complains';
 import { SetAdvice } from 'src/entitys/setAdvice';
+import { SetExamination } from 'src/entitys/setExamination';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Patientsrx, Rxmedicine, Rxexaminations, RxInvestigations, RxAdvice, Rxcomplains, Medicine, Set_investigations, Complains, SetAdvice])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Patientsrx,
+      Rxmedicine,
+      Rxexaminations,
+      RxInvestigations,
+      RxAdvice,
+      Rxcomplains,
+      Medicine,
+      Set_investigations,
+      Complains,
+      SetAdvice,
+      SetExamination,
+    ]),
+  ],
   providers: [CreatepatientsrxService],
-  controllers: [CreatepatientsrxController]
+  controllers: [CreatepatientsrxController],
 })
 export class CreatepatientsrxModule {}

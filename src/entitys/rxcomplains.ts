@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Patientsrx } from './patientsrx';
 import { Complains } from './complains';
 
@@ -14,18 +20,17 @@ export class Rxcomplains {
   updated_by: number;
   @Column({ type: 'timestamp', nullable: true })
   updated_at: Date;
-  @ManyToOne(() => Patientsrx,(patientrx) => patientrx.rxComplains, {
+  @ManyToOne(() => Patientsrx, (patientrx) => patientrx.rxComplains, {
     nullable: true,
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'patientsrxid' }) 
-  patientsrx: Patientsrx
+  @JoinColumn({ name: 'patientsrxid' })
+  patientsrx: Patientsrx;
 
   @ManyToOne(() => Complains, (complain) => complain.rxComplains, {
     nullable: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'complainId' })
-  complains: Complains; 
-
+  complains: Complains;
 }
