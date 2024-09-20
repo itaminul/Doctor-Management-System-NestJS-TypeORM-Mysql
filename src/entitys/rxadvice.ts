@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Patientsrx } from './patientsrx';
+import { SetAdvice } from './setAdvice';
 
 @Entity('rxAdvice')
 export class RxAdvice {
@@ -21,5 +22,12 @@ export class RxAdvice {
   })
   @JoinColumn({ name: 'patientsrxid' }) 
   patientsrx: Patientsrx
+
+  @ManyToOne(() => SetAdvice, (advice) => advice.rxAdvice ,{
+  nullable: true,
+  onDelete: 'CASCADE'    
+  })
+  @JoinColumn({ name: 'adviceId'})
+  setAdvice: SetAdvice
 
 }
