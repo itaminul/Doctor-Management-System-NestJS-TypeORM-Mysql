@@ -28,6 +28,11 @@ export class CreateRxMedicineDTO {
   @IsString()
   remarks: string;
 
+  @IsNumber()
+  @IsOptional()
+  patientsrxid: number;
+  
+
   @IsOptional()
   @ValidateNested()
   @Type(() => CreateMedicineDTO)

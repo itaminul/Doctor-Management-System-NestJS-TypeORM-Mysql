@@ -27,4 +27,12 @@ export class CreatepatientsrxController {
   async create(@Body() createPatientRxDto: CreatePatientsRxDTO) {
     return await this.createPatientService.create(createPatientRxDto);
   }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() updatePatDtp: UpdatePatientsRxDTO,
+  ) {
+    return await this.createPatientService.update(id, updatePatDtp);
+  }
 }

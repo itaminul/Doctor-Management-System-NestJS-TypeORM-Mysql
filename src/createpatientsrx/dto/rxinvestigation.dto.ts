@@ -9,7 +9,9 @@ export class CreateRxInvestigationDTO {
   @IsNumber()
   @IsOptional()
   investigationId?: number;
-
+  @IsNumber()
+  @IsOptional()
+  patientsrxid: number;
   @IsOptional()
   @ValidateNested()
   @Type(() => SetInvestigationDto)

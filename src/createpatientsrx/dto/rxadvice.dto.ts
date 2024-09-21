@@ -6,13 +6,16 @@ export class CreateRxAdviceDTO {
   @IsOptional()
   @IsNumber()
   id: number;
-  @IsNumber()
   @IsOptional()
+  @IsNumber()
   adviceId: number;
+  @IsOptional()
+  @IsNumber()
+  patientsrxid: number;
 
   @IsOptional()
   @IsArray()
   @ValidateNested()
   @Type(() => CreateSetupAdviceDto)
-  createSetupAdviceDto?: CreateSetupAdviceDto[];
+  setupAdvice?: CreateSetupAdviceDto;
 }
