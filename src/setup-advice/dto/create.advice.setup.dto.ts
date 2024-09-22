@@ -1,6 +1,12 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsSemVer, IsString } from "class-validator"
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
 
 export class CreateSetupAdviceDto {
+    @IsOptional()
+    @IsNumber()
+    id: number  
+    @IsOptional()
+    @IsNumber()
+    adviceId: number
     @IsNotEmpty()
     @IsString()
     name: string

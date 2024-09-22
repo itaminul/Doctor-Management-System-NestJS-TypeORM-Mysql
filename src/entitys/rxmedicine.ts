@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Patientsrx } from './patientsrx';
 import { Medicine } from './medicine';
 
@@ -34,7 +34,6 @@ export class Rxmedicine {
     onDelete: 'CASCADE'
   })
   @JoinColumn({ name: 'medicineId' }) 
-  medicine: Medicine
-  
+  medicine: Medicine 
   
 }
