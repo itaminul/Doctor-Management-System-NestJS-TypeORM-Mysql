@@ -324,8 +324,8 @@ export class CreatepatientsrxService {
         patient.rxmedicine = patient.rxmedicine.filter((medicine) =>
           rxmedicine.some((m) => m.id === medicine.id),
         );
-
         const updateMedicinesRx = [];
+
         for (const rxMedicineDto of rxmedicine) {
           let savedMedicine: Medicine;
 
@@ -354,7 +354,6 @@ export class CreatepatientsrxService {
                   this.medicineRepositor.create(rxMedicineDto.medicine),
                 );
               }
-
               // Set the relation properly
               existingMedicineRx.medicine = savedMedicine;
               await this.rxMedicineRepository.save(existingMedicineRx);
@@ -399,46 +398,93 @@ export class CreatepatientsrxService {
 
       //examination start
 
-      if (rxexaminations) {
-        // Filter out examinations that are not in the update DTO
-        patient.rxexaminations = patient.rxexaminations.filter((examination) =>
-          rxexaminations.some((e) => e.id === examination.id),
+      if (rxexaminations && rxexaminations.length > 0) {
+        patient.rxexaminations = patient.rxexaminations.filter(
+          (examination) => {
+            rxexaminations.some((e) => e.id === examination.id);
+          },
         );
+        const updatedExaminations = [];
 
-        const updateExaminations = [];
-
-        for (const rxexaminationDto of rxexaminations) {
-          if (rxexaminationDto.id) {
-            // Find the existing examination record by its ID
-            const existingExamination =
+        for (const rxExaminationDto of rxexaminations) {
+          let saveRxExamination: any;
+          if (rxExaminationDto.id) {
+            const existExamination =
               await this.rxExaminationsRepository.findOne({
                 where: {
-                  id: rxexaminationDto.id,
+                  id: rxExaminationDto.id,
                   patientsrx: { id: patient.id },
                 },
               });
 
-            if (existingExamination) {
-              // Update the existing examination record
-              Object.assign(existingExamination, rxexaminationDto);
-              await this.rxExaminationsRepository.save(existingExamination);
-              updateExaminations.push(existingExamination);
+            if (existExamination) {
+              if (rxExaminationDto.examinationId) {
+                const existingExamination =
+                  await this.setExaminationRepository.findOne({
+                    where: { id: rxExaminationDto.examinationId },
+                  });
+
+                if (existingExamination) {
+                  Object.assign(
+                    existExamination,
+                    rxExaminationDto.setexamination,
+                  );
+                  saveRxExamination =
+                    await this.setExaminationRepository.save(
+                      existingExamination,
+                    );
+                } else {
+                  saveRxExamination = await this.setExaminationRepository.save(
+                    this.setExaminationRepository.create(
+                      rxExaminationDto.setexamination,
+                    ),
+                  );
+                }
+              }
+
+              // Set the relation properly
+              existExamination.setExamination = saveRxExamination;
+              await this.rxExaminationsRepository.save(existExamination);
+              updatedExaminations.push(existExamination);
             }
           } else {
-            // Create a new examination record
-            const newExamination = this.rxExaminationsRepository.create({
-              ...rxexaminationDto,
-              patientsrx: patient, // Maintain the relationship with the parent
+            const newRxExamination = this.rxExaminationsRepository.create({
+              ...rxExaminationDto,
+              patientsrx: patient,
             });
 
-            const savedExamination =
-              await this.rxExaminationsRepository.save(newExamination);
-            updateExaminations.push(savedExamination);
+            if (rxExaminationDto.examinationId) {
+              const existingExamination =
+                await this.setExaminationRepository.findOne({
+                  where: { id: rxExaminationDto.examinationId },
+                });
+
+              if (existingExamination) {
+                newRxExamination.setExamination = existingExamination;
+              } else {
+                const newExamination = this.setExaminationRepository.create(
+                  rxExaminationDto.setexamination,
+                );
+                saveRxExamination =
+                  await this.setExaminationRepository.save(newExamination);
+                newRxExamination.setExamination = saveRxExamination;
+              }
+            } else {
+              const newExamination = this.setExaminationRepository.create(
+                rxExaminationDto.setexamination,
+              );
+              saveRxExamination =
+                await this.setExaminationRepository.save(newExamination);
+              newRxExamination.setExamination = saveRxExamination;
+            }
+
+            const savedRxExamination =
+              await this.rxExaminationsRepository.save(newRxExamination);
+            updatedExaminations.push(savedRxExamination);
           }
         }
 
-        // Update the patient with the updated/new examinations
-        patient.rxexaminations = updateExaminations;
+        patient.rxexaminations = updatedExaminations;
       }
 
       //investigation start
@@ -630,37 +676,6 @@ export class CreatepatientsrxService {
 
           patient.rxComplains = updateRXComplain;
         }
-
-        /*
-        patient.rxComplains = patient.rxComplains.filter((complains) =>
-          rxComplains.some((j) => j.id === complains.id),
-        );
-        const updateComplains = [];
-        for (const rxComplainDto of rxComplains) {
-          if (rxComplainDto.id) {
-            const existingComplains = await this.rxComplainRepositor.findOne({
-              where: { id: rxComplainDto.id, patientsrx: { id: patient.id } },
-            });
-
-            if (existingComplains) {
-              Object.assign(existingComplains, rxComplainDto);
-              await this.rxComplainRepositor.save(existingComplains);
-              updateComplains.push(existingComplains);
-            }
-          } else {
-            const newComplains = this.rxComplainRepositor.create({
-              ...rxComplainDto,
-              updated_at: new Date(),
-              patientsrx: patient,
-            });
-            const saveComplains =
-              await this.rxComplainRepositor.save(newComplains);
-            updateComplains.push(saveComplains);
-          }
-        }
-        patient.rxComplains = updateComplains;
-
-        */
       }
 
       return this.patientRxRepository.save(patient);

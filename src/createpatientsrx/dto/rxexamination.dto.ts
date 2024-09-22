@@ -17,5 +17,5 @@ export class CreateRxExaminationDTO {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => SetupExaminationDto)
-  setexaminationDto?: SetupExaminationDto[];
+  setexamination?: SetupExaminationDto[];
 }
