@@ -1,19 +1,16 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class CreateSetupAdviceDto {
+export class CreateDoctorDTO {
   @IsOptional()
   @IsNumber()
   id: number;
   @IsOptional()
-  @IsNumber()
-  adviceId: number;
-  @IsOptional()
   @IsString()
   name: string;
-  @IsOptional()
-  @IsString()
-  description: string;
-  @IsOptional()
   @IsNumber()
+  @IsOptional()
   slNo: number;
+  @IsString()
+  @IsOptional()
+  degree_name: string;
 }
