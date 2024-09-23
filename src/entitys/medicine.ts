@@ -7,6 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Rxmedicine } from './rxmedicine';
+import { Doctor } from './doctor';
 
 @Entity('medicine')
 export class Medicine {
@@ -26,7 +27,8 @@ export class Medicine {
   categoryId: number;
   @Column({ nullable: true })
   strength: string;
-  @Column({ default: 1 })
+  @Column({ default: 1})
+  orgId: number
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
@@ -40,4 +42,11 @@ export class Medicine {
   })
   @JoinColumn({ name: 'medicineId' })
   rxMedicine: Rxmedicine[];
+
+  @ManyToOne(() => Doctor, (doc) => doc.medicine, {
+    nullable: true,
+    onDelete: 'CASCADE'
+  })
+  @JoinColumn({ name: 'doctorId'})
+  doctor: Doctor
 }
