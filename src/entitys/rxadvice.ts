@@ -12,6 +12,10 @@ import { SetAdvice } from './setAdvice';
 export class RxAdvice {
   @PrimaryGeneratedColumn()
   id: number;
+  @Column({ default: 1})
+  doctorId: number
+  @Column({ default: 1})
+  orgId: number
   @Column({ default: 1 })
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })

@@ -12,6 +12,10 @@ import { Set_investigations } from './set_investigations';
 export class RxInvestigations {
   @PrimaryGeneratedColumn()
   id: number;
+  @Column({ default: 1})
+  doctorId: number
+  @Column({ default: 1})
+  orgId: number
   @Column({ default: 1 })
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
