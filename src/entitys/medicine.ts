@@ -39,5 +39,5 @@ export class Medicine {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'medicineId' })
-  rxMedicine: Rxmedicine[]; 
+  rxMedicine: Rxmedicine[];
 }

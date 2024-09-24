@@ -7,6 +7,6 @@ import { Set_investigations } from 'src/entitys/set_investigations';
 @Module({
   imports: [TypeOrmModule.forFeature([Set_investigations])],
   providers: [SetInvestigationService],
-  controllers: [SetInvestigationController]
+  controllers: [SetInvestigationController],
 })
 export class SetInvestigationModule {}

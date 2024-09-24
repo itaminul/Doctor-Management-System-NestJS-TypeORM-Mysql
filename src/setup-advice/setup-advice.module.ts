@@ -7,6 +7,6 @@ import { SetAdvice } from 'src/entitys/setAdvice';
 @Module({
   imports: [TypeOrmModule.forFeature([SetAdvice])],
   providers: [SetupAdviceService],
-  controllers: [SetupAdviceController]
+  controllers: [SetupAdviceController],
 })
 export class SetupAdviceModule {}

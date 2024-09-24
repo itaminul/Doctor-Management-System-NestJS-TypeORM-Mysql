@@ -7,6 +7,6 @@ import { SetExamination } from 'src/entitys/setExamination';
 @Module({
   imports: [TypeOrmModule.forFeature([SetExamination])],
   providers: [SetExaminationService],
-  controllers: [SetExaminationController]
+  controllers: [SetExaminationController],
 })
 export class SetExaminationModule {}

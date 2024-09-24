@@ -1,10 +1,19 @@
-import { IsNumber, IsOptional } from "class-validator"
+import { Type } from 'class-transformer';
+import { IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
+import { SetupExaminationDto } from 'src/set-examination/dto/create.set.examination.dto';
 
 export class CreateRxExaminationDTO {
-     @IsOptional()
-    @IsNumber()
-    id: number
-    @IsNumber()
-    @IsOptional()
-    examinationId?: number
+  @IsOptional()
+  @IsNumber()
+  id: number;
+
+  @IsOptional()
+  @IsNumber()
+  examinationId?: number;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SetupExaminationDto)
+  setexaminationDto?: SetupExaminationDto[];
 }

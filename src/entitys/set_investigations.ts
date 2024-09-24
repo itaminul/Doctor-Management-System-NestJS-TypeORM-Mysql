@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { RxInvestigations } from './rxinvestigations';
 
 @Entity('setInvestigations')
@@ -7,9 +14,9 @@ export class Set_investigations {
   id: number;
   @Column()
   name: string;
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   description: string;
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   slNo: number;
   @Column({ default: 1 })
   activeStatus: number;
@@ -19,11 +26,10 @@ export class Set_investigations {
   updated_by: number;
   @Column({ type: 'datetime', nullable: true })
   updated_at: Date;
-  @OneToMany(() => RxInvestigations,(rxInves) => rxInves.setInvestigations, {
+  @OneToMany(() => RxInvestigations, (rxInves) => rxInves.setInvestigations, {
     nullable: true,
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'investigationId' }) 
-  rxInvestigations: Set_investigations[]
-
+  @JoinColumn({ name: 'investigationId' })
+  rxInvestigations: Set_investigations[];
 }

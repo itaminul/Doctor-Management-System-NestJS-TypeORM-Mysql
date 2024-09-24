@@ -5,12 +5,10 @@ import { SetExaminationService } from './set-examination.service';
 
 @Controller('set-examination')
 export class SetExaminationController {
-    constructor(
-        public readonly exampSetupService: SetExaminationService
-    ){}
+  constructor(public readonly exampSetupService: SetExaminationService) {}
 
-    @Post()
-    async create(@Body() setupExaminationDto: SetupExaminationDto) {
-        return await this.exampSetupService.create(setupExaminationDto);
-    }
+  @Post()
+  async create(@Body() setupExaminationDto: SetupExaminationDto) {
+    return await this.exampSetupService.create(setupExaminationDto);
+  }
 }

@@ -9,7 +9,9 @@ describe('SetInvestigationController', () => {
       controllers: [SetInvestigationController],
     }).compile();
 
-    controller = module.get<SetInvestigationController>(SetInvestigationController);
+    controller = module.get<SetInvestigationController>(
+      SetInvestigationController,
+    );
   });
 
   it('should be defined', () => {

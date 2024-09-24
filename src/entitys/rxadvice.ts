@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Patientsrx } from './patientsrx';
 import { SetAdvice } from './setAdvice';
 
@@ -14,18 +20,17 @@ export class RxAdvice {
   updated_by: number;
   @Column({ type: 'datetime', nullable: true })
   updated_at: Date;
-  @ManyToOne(() => Patientsrx,(patientrx) => patientrx.rxAdvice, {
+  @ManyToOne(() => Patientsrx, (patientrx) => patientrx.rxAdvice, {
     nullable: true,
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'patientsrxid' }) 
-  patientsrx: Patientsrx
+  @JoinColumn({ name: 'patientsrxid' })
+  patientsrx: Patientsrx;
 
-  @ManyToOne(() => SetAdvice, (advice) => advice.rxAdvice ,{
-  nullable: true,
-  onDelete: 'CASCADE'    
+  @ManyToOne(() => SetAdvice, (advice) => advice.rxAdvice, {
+    nullable: true,
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'adviceId'})
-  setAdvice: SetAdvice
-
+  @JoinColumn({ name: 'adviceId' })
+  setAdvice: SetAdvice;
 }
