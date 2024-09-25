@@ -13,6 +13,7 @@ import { SetAdvice } from './entitys/setAdvice';
 import { SetExamination } from './entitys/setExamination';
 import { Doctor } from './entitys/doctor';
 import { Users } from './entitys/users';
+import { pat_patients_info } from './entitys/pat_patients_info';
 
 export const AppDataSource: DataSourceOptions = {
   type: 'mysql',
@@ -35,7 +36,8 @@ export const AppDataSource: DataSourceOptions = {
     SetAdvice,
     SetExamination,
     Doctor,
-    Users
+    Users,
+    pat_patients_info
   ],
   // migrations: ['./src/migrations/*.ts'], // For TypeScript files
   migrations: ['./dist/migrations/*.js'],

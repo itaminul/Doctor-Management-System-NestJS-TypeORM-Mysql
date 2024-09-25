@@ -13,6 +13,7 @@ import { Set_investigations } from 'src/entitys/set_investigations';
 import { Complains } from 'src/entitys/complains';
 import { SetAdvice } from 'src/entitys/setAdvice';
 import { SetExamination } from 'src/entitys/setExamination';
+import { pat_patients_info } from 'src/entitys/pat_patients_info';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { SetExamination } from 'src/entitys/setExamination';
       Complains,
       SetAdvice,
       SetExamination,
+      pat_patients_info
     ]),
   ],
   providers: [CreatepatientsrxService],

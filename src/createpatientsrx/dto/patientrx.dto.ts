@@ -25,7 +25,9 @@ export class CreatePatientsRxDTO {
   followUp: number;
   @IsNumber()
   rxStatus: number;
-
+  @IsOptional()
+  @IsNumber()
+  patientId: number
   @IsOptional() // Make optional
   @IsArray()
   @ValidateNested({ each: true })
@@ -55,4 +57,5 @@ export class CreatePatientsRxDTO {
   @ValidateNested({ each: true })
   @Type(() => CreateComplainDTO)
   rxComplains?: CreateComplainDTO[];
+  
 }

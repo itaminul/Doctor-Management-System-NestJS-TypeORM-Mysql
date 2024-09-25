@@ -4,12 +4,14 @@ import {
   Column,
   OneToMany,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 import { Rxmedicine } from './rxmedicine';
 import { Rxexaminations } from './rxexaminations';
 import { RxInvestigations } from './rxinvestigations';
 import { RxAdvice } from './rxadvice';
 import { Rxcomplains } from './rxcomplains';
+import { pat_patients_info } from './pat_patients_info';
 
 @Entity('patientsrx')
 export class Patientsrx {
@@ -71,4 +73,17 @@ export class Patientsrx {
     eager: true,
   })
   rxComplains: Rxcomplains[];
+
+  @ManyToMany(
+    () => pat_patients_info,
+    (patPatientInfo) => patPatientInfo.patientsrx,
+    {
+      nullable: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn({ name: 'patientId' })
+  patPatientInfo: pat_patients_info;
+  @Column({ nullable: true }) // Adjust the type and options as necessary
+  patientId: number; // Ensure this field exists if you're storing it
 }
