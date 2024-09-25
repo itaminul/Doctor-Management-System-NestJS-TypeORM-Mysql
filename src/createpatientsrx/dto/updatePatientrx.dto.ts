@@ -13,6 +13,7 @@ import { CreateRxAdviceDTO } from './rxadvice.dto';
 import { CreateRxComplainsDTO } from './rxcomplains.dto';
 
 export class UpdatePatientsRxDTO {
+  @IsOptional()
   @IsNumber()
   patientsrxid: number;
   @IsString()
@@ -22,28 +23,37 @@ export class UpdatePatientsRxDTO {
   @IsNumber()
   rxStatus: number;
 
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateRxExaminationDTO)
-  rxexaminations: CreateRxExaminationDTO[];
+  rxexaminations?: CreateRxExaminationDTO[];
 
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateRxMedicineDTO)
-  rxmedicine: CreateRxMedicineDTO[];
+  rxmedicine?: CreateRxMedicineDTO[];
 
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateRxInvestigationDTO)
-  rxInvestigations: CreateRxInvestigationDTO[];
+  rxInvestigations?: CreateRxInvestigationDTO[];
 
+
+
+  @IsOptional() // Make optional
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateRxAdviceDTO)
-  rxAdvice: CreateRxAdviceDTO[];
+  rxAdvice?: CreateRxAdviceDTO[];
 
+  
+
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateRxComplainsDTO)
-  rxComplains: CreateRxComplainsDTO[];
+  rxComplains?: CreateRxComplainsDTO[];
 }

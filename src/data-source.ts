@@ -46,6 +46,8 @@ export default dataSource;
 // npm run typeorm -- migration:generate -d ./dist/data-source.js ./src/migrations/CreateEmployeeAndDepartmentTables
 // npm run typeorm -- migration:generate -d ./dist/data-source.js ./src/migrations/CreateEmployeeAndDepartmentTables
 // npm run typeorm -- migration:run -d ./data-source.ts
+//npm run typeorm -- migration:run -d ./dist/data-source.js -- -n <MigrationName>
+
 // npm run migration:generate
 // npm run migration:run
 //npm run typeorm -- migration:run -d ./src/data-source.ts

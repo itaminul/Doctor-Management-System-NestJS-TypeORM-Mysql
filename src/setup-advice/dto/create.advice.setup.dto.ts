@@ -7,7 +7,7 @@ export class CreateSetupAdviceDto {
   @IsOptional()
   @IsNumber()
   adviceId: number;
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   name: string;
   @IsOptional()

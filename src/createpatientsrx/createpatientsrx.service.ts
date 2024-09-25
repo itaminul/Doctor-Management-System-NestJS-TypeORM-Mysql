@@ -52,7 +52,9 @@ export class CreatepatientsrxService {
           rxInvestigations: {
             setInvestigations: true,
           },
-          rxexaminations: true,
+          rxexaminations: {
+            setExamination: true
+          },
           rxComplains: {
             complains: true,
           },
@@ -296,7 +298,7 @@ export class CreatepatientsrxService {
     }
   }
 
-  async update(id: number, updatePatientsRxDTO: UpdatePatientsRxDTO) {
+  async update(id: number,  updatePatientsRxDTO: UpdatePatientsRxDTO) {
     try {
       const {
         rxmedicine,
@@ -308,7 +310,7 @@ export class CreatepatientsrxService {
       } = updatePatientsRxDTO;
       const patient = await this.patientRxRepository.findOne({
         where: { id },
-        relations: ['rxmedicine', 'rxexaminations'],
+        relations: ['rxmedicine', 'rxexaminations','rxAdvice'],
       });
 
       if (!patient) {
@@ -474,33 +476,84 @@ export class CreatepatientsrxService {
         patient.rxInvestigations = updateInvestigation;
       }
 
-      if (rxAdvice) {
+      
+      if (rxAdvice && rxAdvice.length > 0) {
         patient.rxAdvice = patient.rxAdvice.filter((advice) =>
-          rxAdvice.some((i) => i.id === advice.id),
+          rxAdvice.some((n) => n.id === advice.id),
         );
-        const updateAdvice = [];
+        const updateAdviceRx = [];
         for (const rxAdviceDto of rxAdvice) {
+          let savedAdvice: any;
+
           if (rxAdviceDto.id) {
-            const existingAdvice = await this.rxAdviceRepository.findOne({
+            const existingAdviceRx = await this.rxAdviceRepository.findOne({
               where: { id: rxAdviceDto.id, patientsrx: { id: patient.id } },
             });
-            if (existingAdvice) {
-              Object.assign(existingAdvice, rxAdviceDto);
-              await this.rxAdviceRepository.save(existingAdvice);
-              updateAdvice.push(existingAdvice);
+
+            if (existingAdviceRx) {
+              if (rxAdviceDto.adviceId) {
+                const existingAdvice = await this.setAdviceRepository.findOne({
+                  where: { id: rxAdviceDto.adviceId },
+                });
+
+                if (existingAdvice) {
+                  Object.assign(existingAdvice, rxAdviceDto.setupAdvice);
+                  savedAdvice =
+                    await this.setAdviceRepository.save(existingAdvice);
+                } else {
+                  savedAdvice = await this.setAdviceRepository.save(
+                    this.setAdviceRepository.create(rxAdviceDto.setupAdvice),
+                  );
+                }
+              } else {
+                savedAdvice = await this.setAdviceRepository.save(
+                  this.setAdviceRepository.create(rxAdviceDto.setupAdvice),
+                );
+              }
+
+              // Set the relation properly
+              existingAdviceRx.setAdvice = savedAdvice;
+              await this.rxAdviceRepository.save(existingAdviceRx);
+              updateAdviceRx.push(existingAdviceRx);
             }
           } else {
-            const newAdvice = this.rxAdviceRepository.create({
+            const newRxAdvice = this.rxAdviceRepository.create({
               ...rxAdviceDto,
               patientsrx: patient,
             });
-            const saveAdvice = await this.rxAdviceRepository.save(newAdvice);
-            updateAdvice.push(saveAdvice);
+
+            if (rxAdviceDto.adviceId) {
+              const existingMedicine = await this.setAdviceRepository.findOne({
+                where: { id: rxAdviceDto.adviceId },
+              });
+
+              if (existingMedicine) {
+                newRxAdvice.setAdvice = existingMedicine;
+              } else {
+                const newMedicine = this.setAdviceRepository.create(
+                  rxAdviceDto.setupAdvice,
+                );
+                savedAdvice = await this.setAdviceRepository.save(newMedicine);
+                newRxAdvice.setAdvice = savedAdvice;
+              }
+            } else {
+              const newMedicine = this.setAdviceRepository.create(
+                rxAdviceDto.setupAdvice,
+              );
+              savedAdvice = await this.setAdviceRepository.save(newMedicine);
+              newRxAdvice.setAdvice = savedAdvice;
+            }
+
+            const savedRxMedicine =
+              await this.rxAdviceRepository.save(newRxAdvice);
+              updateAdviceRx.push(savedRxMedicine);
           }
         }
-        patient.rxAdvice = updateAdvice;
-      }
 
+        console.log("updateAdviceRx", updateAdviceRx)
+        patient.rxAdvice = updateAdviceRx;
+      }
+      
       if (rxComplains) {
         patient.rxComplains = patient.rxComplains.filter((complains) =>
           rxComplains.some((j) => j.id === complains.id),

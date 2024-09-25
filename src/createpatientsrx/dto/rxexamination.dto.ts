@@ -6,7 +6,9 @@ export class CreateRxExaminationDTO {
   @IsOptional()
   @IsNumber()
   id: number;
-
+  @IsNumber()
+  @IsOptional()
+  patientsrxid: number;
   @IsOptional()
   @IsNumber()
   examinationId?: number;
