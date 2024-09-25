@@ -47,8 +47,52 @@ export class CreatepatientsrxService {
 
   async getAll() {
     try {
+      /* const data1 = await this.patientRxRepository
+      .createQueryBuilder('patientsrx')
+      .leftJoinAndSelect('patientsrx.patPatientInfo', 'patPatientInfo') 
+      .addSelect(['patPatientInfo.id']) // Replace with valid columns
+      .leftJoinAndSelect('patientsrx.rxmedicine', 'rxmedicine')
+      .leftJoinAndSelect('rxmedicine.medicine', 'medicine')
+      .leftJoinAndSelect('patientsrx.rxInvestigations', 'rxInvestigations')
+      .leftJoinAndSelect('rxInvestigations.setInvestigations', 'setInvestigations')
+      .leftJoinAndSelect('patientsrx.rxexaminations', 'rxexaminations')
+      .leftJoinAndSelect('rxexaminations.setExamination', 'setExamination')
+      .leftJoinAndSelect('patientsrx.rxComplains', 'rxComplains')
+      .leftJoinAndSelect('rxComplains.complains', 'complains')
+      .leftJoinAndSelect('patientsrx.rxAdvice', 'rxAdvice')
+      .leftJoinAndSelect('rxAdvice.setAdvice', 'setAdvice')
+      .addSelect([      
+        'setAdvice.name' 
+      ])
+      .orderBy('patientsrx.id', 'DESC')
+      .getMany();
+
+      
+      const data2 = await this.patientRxRepository
+      .createQueryBuilder('patientsrx')
+      .select([
+        'patientsrx.id', 
+        'patientsrx.RXDATE', 
+        'patientsrx.followUp', 
+        'patientsrx.rxStatus', 
+        'patientsrx.activeStatus',
+        'patPatientInfo.name', 
+        'complains.name complainName'
+      ])
+      .leftJoin('pat_patients_info', 'patPatientInfo', 'patientsrx.patientId = patPatientInfo.id')
+      .leftJoin('rxmedicine', 'rxmedicine', 'patientsrx.id = rxmedicine.patientsrxId')
+      .leftJoin('rxInvestigations', 'rxInvestigations', 'patientsrx.id = rxInvestigations.patientsrxId')
+      .leftJoin('rxexaminations', 'rxexaminations', 'patientsrx.id = rxexaminations.patientsrxId')
+      .leftJoin('rxComplains', 'rxComplains', 'patientsrx.id = rxComplains.patientsrxId')
+      .leftJoinAndSelect('rxComplains.complains', 'complains')
+      .leftJoin('rxAdvice', 'rxAdvice', 'patientsrx.id = rxAdvice.patientsrxId')
+      .leftJoinAndSelect('rxAdvice.setAdvice', 'setAdvice')
+      .orderBy('patientsrx.id', 'DESC')
+      .getRawMany();
+*/
       const data = await this.patientRxRepository.find({
         relations: {
+          patPatientInfo: true,
           rxmedicine: {
             medicine: true,
           },
@@ -69,7 +113,32 @@ export class CreatepatientsrxService {
           id: 'DESC',
         },
       });
-      return data;
+
+      const formattedData = data.map((patientdata) => ({
+        patientId: patientdata.patPatientInfo.id,
+        patients: patientdata.patPatientInfo.name,
+        medicines: patientdata.rxmedicine.map((medicine) => ({
+          patientId: patientdata.patPatientInfo.id,
+          rxmedicine: medicine.id,
+          medicineId: medicine.medicine.id,
+          medicineName: medicine.medicine.medicineName,
+        })),
+        investigations: patientdata.rxInvestigations.map((investigation) => ({
+          patientId: patientdata.patPatientInfo.id,
+          rxInvestigationId: investigation.id,
+          setInvestigationId: investigation.setInvestigations.id,
+          investigationName: investigation.setInvestigations.name,
+        })),
+
+        examinations: patientdata.rxexaminations.map((examination) => ({
+          patientId: patientdata.patPatientInfo.id,
+          rxExaminationId: examination.id,
+          setExaminationId: examination.setExamination.id,
+          examinationName: examination.setExamination.name,
+        })),
+      }));
+
+      return formattedData;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -99,24 +168,6 @@ export class CreatepatientsrxService {
       const complainMap = new Map<number, Complains>();
       const setAdviceMap = new Map<number, SetAdvice>();
       const setExaminationMap = new Map<number, SetExamination>();
-
-      const patientSetupData = await this.patientSetupRepository.find({
-        select: ['id'],
-        where: { id: patientData.patientId },
-      });
-      if (!patientSetupData) {
-        throw new Error(
-          `Patient with id ${patientSetupData } not found`,
-        );
-      }else{
-      for (const patientSetupDto of patientSetupData) {
-        const patientRxData = this.patientRxRepository.create({
-          patPatientInfo: savePatientRx,
-          patientId: patientSetupDto.id,
-        });
-        await this.patientRxRepository.save(patientRxData);
-      }
-    }
 
       if (rxmedicine && rxmedicine.length > 0) {
         for (const medicineDto of rxmedicine) {
@@ -346,8 +397,6 @@ export class CreatepatientsrxService {
       }
       Object.assign(patient, patientData);
       await this.patientRxRepository.save(patient);
-
-
 
       // Medicine update and insertion
       if (rxmedicine) {
