@@ -53,7 +53,7 @@ export class CreatepatientsrxService {
             setInvestigations: true,
           },
           rxexaminations: {
-            setExamination: true
+            setExamination: true,
           },
           rxComplains: {
             complains: true,
@@ -298,7 +298,7 @@ export class CreatepatientsrxService {
     }
   }
 
-  async update(id: number,  updatePatientsRxDTO: UpdatePatientsRxDTO) {
+  async update(id: number, updatePatientsRxDTO: UpdatePatientsRxDTO) {
     try {
       const {
         rxmedicine,
@@ -310,7 +310,7 @@ export class CreatepatientsrxService {
       } = updatePatientsRxDTO;
       const patient = await this.patientRxRepository.findOne({
         where: { id },
-        relations: ['rxmedicine', 'rxexaminations','rxAdvice'],
+        relations: ['rxmedicine', 'rxexaminations', 'rxAdvice', 'rxComplains'],
       });
 
       if (!patient) {
@@ -476,7 +476,6 @@ export class CreatepatientsrxService {
         patient.rxInvestigations = updateInvestigation;
       }
 
-      
       if (rxAdvice && rxAdvice.length > 0) {
         patient.rxAdvice = patient.rxAdvice.filter((advice) =>
           rxAdvice.some((n) => n.id === advice.id),
@@ -546,15 +545,93 @@ export class CreatepatientsrxService {
 
             const savedRxMedicine =
               await this.rxAdviceRepository.save(newRxAdvice);
-              updateAdviceRx.push(savedRxMedicine);
+            updateAdviceRx.push(savedRxMedicine);
           }
         }
-
-        console.log("updateAdviceRx", updateAdviceRx)
         patient.rxAdvice = updateAdviceRx;
       }
-      
-      if (rxComplains) {
+
+      if (rxComplains && rxComplains.length > 0) {
+        patient.rxComplains = patient.rxComplains.filter((complains) =>
+          rxComplains.some((j) => j.id === complains.id),
+        );
+
+        const updateRXComplain = [];
+        for (const rxComplainDto of rxComplains) {
+          let saveRxComplain: any;
+          if (rxComplainDto.id) {
+            const checkExistingRxCompalin =
+              await this.rxComplainRepositor.findOne({
+                where: { id: rxComplainDto.id, patientsrx: { id: patient.id } },
+              });
+
+            if (checkExistingRxCompalin) {
+              if (rxComplainDto.complainId) {
+                const existingComplainSetup =
+                  await this.setComplainRepository.findOne({
+                    where: { id: rxComplainDto.complainId },
+                  });
+
+                if (existingComplainSetup) {
+                  Object.assign(existingComplainSetup, rxComplainDto.complains);
+                  saveRxComplain = await this.setComplainRepository.save(
+                    existingComplainSetup,
+                  );
+                } else {
+                  saveRxComplain = await this.setComplainRepository.save(
+                    this.setComplainRepository.create(rxComplainDto.complains),
+                  );
+                }
+              } else {
+                saveRxComplain = await this.setComplainRepository.save(
+                  this.setComplainRepository.create(rxComplainDto.complains),
+                );
+              }
+              // Set the relation properly
+              checkExistingRxCompalin.complains = saveRxComplain;
+              await this.rxComplainRepositor.save(checkExistingRxCompalin);
+              updateRXComplain.push(checkExistingRxCompalin);
+            }
+          } else {
+            const newRxComplain = this.rxComplainRepositor.create({
+              ...rxComplainDto,
+              patientsrx: patient,
+            });
+
+            if (rxComplainDto.complainId) {
+              const existingComplain = await this.setComplainRepository.findOne(
+                {
+                  where: { id: rxComplainDto.complainId },
+                },
+              );
+
+              if (existingComplain) {
+                newRxComplain.complains = existingComplain;
+              } else {
+                const newComplain = this.setAdviceRepository.create(
+                  rxComplainDto.complains,
+                );
+                saveRxComplain =
+                  await this.setAdviceRepository.save(newComplain);
+                newRxComplain.complains = saveRxComplain;
+              }
+            } else {
+              const newComplain = this.setAdviceRepository.create(
+                rxComplainDto.complains,
+              );
+              saveRxComplain = await this.setAdviceRepository.save(newComplain);
+              newRxComplain.complains = saveRxComplain;
+            }
+
+            const savedRxComplain =
+              await this.rxComplainRepositor.save(newRxComplain);
+            updateRXComplain.push(savedRxComplain);
+          }
+
+          patient.rxComplains = updateRXComplain;
+        }
+
+        /*
         patient.rxComplains = patient.rxComplains.filter((complains) =>
           rxComplains.some((j) => j.id === complains.id),
         );
@@ -582,6 +659,8 @@ export class CreatepatientsrxService {
           }
         }
         patient.rxComplains = updateComplains;
+
+        */
       }
 
       return this.patientRxRepository.save(patient);
