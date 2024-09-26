@@ -2,10 +2,12 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Patientsrx } from './patientsrx';
+import { Doctor } from './doctor';
 
 @Entity('pat_patients_info')
 export class pat_patients_info {
@@ -37,9 +39,6 @@ export class pat_patients_info {
 
   @Column({ type: 'int', nullable: true })
   DEPT_ID: number;
-
-  @Column({ type: 'int', nullable: true })
-  DOCTOR_ID: number;
 
   @Column({ type: 'int', nullable: true })
   ROOM_NO: number;
@@ -94,4 +93,8 @@ export class pat_patients_info {
   })
   @JoinColumn({ name: 'patientId' })
   patientsrx: pat_patients_info[];
+
+  @ManyToOne(() => Doctor, doctor => doctor.doctorInfo)
+  doctor: Doctor;
+  patPatienInfo: pat_patients_info[];
 }

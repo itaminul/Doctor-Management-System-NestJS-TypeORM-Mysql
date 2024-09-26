@@ -13,11 +13,15 @@ import { CreateRxInvestigationDTO } from './rxinvestigation.dto';
 import { CreateRxAdviceDTO } from './rxadvice.dto';
 import { CreateRxComplainsDTO } from './rxcomplains.dto';
 import { CreateComplainDTO } from 'src/complain/dto/create.complain.dto';
+import { pat_patients_info } from 'src/entitys/pat_patients_info';
 
 export class CreatePatientsRxDTO {
   @IsOptional()
   @IsNumber()
   id: number;
+  @IsOptional()
+  @IsNumber()
+  doctorId: number
   @IsNotEmpty()
   @IsString()
   RXDATE: string;
@@ -57,5 +61,11 @@ export class CreatePatientsRxDTO {
   @ValidateNested({ each: true })
   @Type(() => CreateComplainDTO)
   rxComplains?: CreateComplainDTO[];
+
+  // @IsOptional()
+  // @IsArray()
+  // @ValidateNested({ each: true})
+  // @Type(() => pat_patients_info)
+  // patientInfo: pat_patients_info
   
 }
