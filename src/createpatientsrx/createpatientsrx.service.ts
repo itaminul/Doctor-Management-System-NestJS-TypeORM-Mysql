@@ -310,7 +310,13 @@ export class CreatepatientsrxService {
       } = updatePatientsRxDTO;
       const patient = await this.patientRxRepository.findOne({
         where: { id },
-        relations: ['rxmedicine', 'rxexaminations', 'rxAdvice', 'rxComplains'],
+        relations: [
+          'rxmedicine',
+          'rxexaminations',
+          'rxAdvice',
+          'rxComplains',
+          'rxInvestigations',
+        ],
       });
 
       if (!patient) {
@@ -496,6 +502,8 @@ export class CreatepatientsrxService {
         );
         const updateInvestigation = [];
         for (const rxInvestigationDto of rxInvestigations) {
+          let saveRxInvestigations: any;
+
           if (rxInvestigationDto.id) {
             const existingInvestigation =
               await this.rxInvestigationsRepository.findOne({
@@ -505,18 +513,72 @@ export class CreatepatientsrxService {
                 },
               });
             if (existingInvestigation) {
-              Object.assign(existingInvestigation, rxInvestigationDto);
+              if (rxInvestigationDto.investigationId) {
+                const existingInvestigation =
+                  await this.setExaminationRepository.findOne({
+                    where: { id: rxInvestigationDto.investigationId },
+                  });
+
+                if (existingInvestigation) {
+                  Object.assign(
+                    existingInvestigation,
+                    rxInvestigationDto.setInvestigation,
+                  );
+                  saveRxInvestigations =
+                    await this.setExaminationRepository.save(
+                      existingInvestigation,
+                    );
+                } else {
+                  saveRxInvestigations =
+                    await this.setInvestigationRepository.save(
+                      this.setInvestigationRepository.create(
+                        rxInvestigationDto.setInvestigation,
+                      ),
+                    );
+                }
+              }
+              // Set the relation properly
+              existingInvestigation.setInvestigations = saveRxInvestigations;
               await this.rxInvestigationsRepository.save(existingInvestigation);
               updateInvestigation.push(existingInvestigation);
             }
           } else {
-            const newInvestigation = this.rxInvestigationsRepository.create({
+            const newRxInvestigation = this.rxInvestigationsRepository.create({
               ...rxInvestigationDto,
               patientsrx: patient,
             });
-            const saveInvestigation =
-              await this.rxInvestigationsRepository.save(newInvestigation);
-            updateInvestigation.push(saveInvestigation);
+
+            if (rxInvestigationDto.investigationId) {
+              const existingInvestigation =
+                await this.setExaminationRepository.findOne({
+                  where: { id: rxInvestigationDto.investigationId },
+                });
+
+              if (existingInvestigation) {
+                rxInvestigationDto.setInvestigation = existingInvestigation;
+              } else {
+                const newRxInvestigation =
+                  this.setInvestigationRepository.create(
+                    rxInvestigationDto.setInvestigation,
+                  );
+                saveRxInvestigations =
+                  await this.setInvestigationRepository.save(
+                    newRxInvestigation,
+                  );
+                newRxInvestigation.rxInvestigations = saveRxInvestigations;
+              }
+            } else {
+              const newInvestigations = this.setExaminationRepository.create(
+                rxInvestigationDto.setInvestigation,
+              );
+              saveRxInvestigations =
+                await this.setInvestigationRepository.save(newInvestigations);
+              newRxInvestigation.setInvestigations = saveRxInvestigations;
+            }
+
+            const savedRxInvestigation =
+              await this.setInvestigationRepository.save(newRxInvestigation);
+            updateInvestigation.push(savedRxInvestigation);
           }
         }
         patient.rxInvestigations = updateInvestigation;
