@@ -15,6 +15,27 @@ export class CreateRxMedicineDTO {
   @IsOptional()
   @IsNumber()
   medicineId: number;
+
+  @IsOptional()
+  @IsNumber()
+  numberOfTimes: number;
+
+  @IsOptional()
+  @IsNumber()
+  morning: number;
+
+  @IsOptional()
+  @IsNumber()
+  lunch: number;
+
+  @IsOptional()
+  @IsNumber()
+  evening: number;
+
+  @IsOptional()
+  @IsNumber()
+  night: number;
+
   @IsOptional()
   @IsString()
   doses: string;
@@ -31,7 +52,6 @@ export class CreateRxMedicineDTO {
   @IsNumber()
   @IsOptional()
   patientsrxid: number;
-  
 
   @IsOptional()
   @ValidateNested()
