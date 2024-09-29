@@ -2,12 +2,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { Patientsrx } from './patientsrx';
 import { Rxcomplains } from './rxcomplains';
+
 
 @Entity('complains')
 export class Complains {
@@ -21,6 +20,10 @@ export class Complains {
   description: string;
   @Column({ default: 1 })
   activeStatus: number;
+  @Column({ default: 1})
+  doctorId: number
+  @Column({ default: 1})
+  orgId: number
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
   @Column({ type: 'int', nullable: true })
