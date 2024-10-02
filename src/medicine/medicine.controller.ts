@@ -1,8 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
+  Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +13,7 @@ import { Medicine } from 'src/entitys/medicine';
 import { Repository } from 'typeorm';
 import { CreateMedicineDTO } from './dto/create.medicine.dto';
 import { MedicineService } from './medicine.service';
+import { UpdateMedicineDTO } from './dto/update.medicine.dto';
 
 @Controller('medicine')
 export class MedicineController {
@@ -19,6 +23,10 @@ export class MedicineController {
     public readonly medicineService: MedicineService,
   ) {}
 
+  @Get()
+  async getAll() {
+    return await this.medicineService.getAll();
+  }
   @Post()
   async create(@Body() createMedicineDto: CreateMedicineDTO) {
     try {
@@ -39,5 +47,13 @@ export class MedicineController {
         );
       }
     }
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateMediDto: UpdateMedicineDTO,
+  ) {
+    return await this.medicineService.update(id, updateMediDto);
   }
 }
