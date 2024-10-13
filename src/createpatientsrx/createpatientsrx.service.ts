@@ -14,6 +14,7 @@ import { Set_investigations } from 'src/entitys/set_investigations';
 import { Complains } from 'src/entitys/complains';
 import { SetAdvice } from 'src/entitys/setAdvice';
 import { SetExamination } from 'src/entitys/setExamination';
+import { pat_patients_info } from 'src/entitys/pat_patients_info';
 
 @Injectable()
 export class CreatepatientsrxService {
@@ -40,6 +41,8 @@ export class CreatepatientsrxService {
     public readonly setAdviceRepository: Repository<SetAdvice>,
     @InjectRepository(SetExamination)
     public readonly setExaminationRepository: Repository<SetExamination>,
+    @InjectRepository(pat_patients_info)
+    public readonly patientSetupRepository: Repository<pat_patients_info>,
   ) {}
 
   async getAll() {
@@ -96,6 +99,25 @@ export class CreatepatientsrxService {
       const complainMap = new Map<number, Complains>();
       const setAdviceMap = new Map<number, SetAdvice>();
       const setExaminationMap = new Map<number, SetExamination>();
+
+      const patientSetupData = await this.patientSetupRepository.find({
+        select: ['id'],
+        where: { id: patientData.patientId },
+      });
+      if (!patientSetupData) {
+        throw new Error(
+          `Patient with id ${patientSetupData } not found`,
+        );
+      }else{
+      for (const patientSetupDto of patientSetupData) {
+        const patientRxData = this.patientRxRepository.create({
+          patPatientInfo: savePatientRx,
+          patientId: patientSetupDto.id,
+        });
+        await this.patientRxRepository.save(patientRxData);
+      }
+    }
+
       if (rxmedicine && rxmedicine.length > 0) {
         for (const medicineDto of rxmedicine) {
           let medicine: any;
@@ -324,6 +346,8 @@ export class CreatepatientsrxService {
       }
       Object.assign(patient, patientData);
       await this.patientRxRepository.save(patient);
+
+
 
       // Medicine update and insertion
       if (rxmedicine) {

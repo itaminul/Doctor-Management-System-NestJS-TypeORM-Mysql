@@ -22,7 +22,9 @@ export class UpdatePatientsRxDTO {
   followUp: number;
   @IsNumber()
   rxStatus: number;
-
+  @IsOptional()
+  @IsNumber()
+  patientId: number;
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
@@ -41,15 +43,11 @@ export class UpdatePatientsRxDTO {
   @Type(() => CreateRxInvestigationDTO)
   rxInvestigations?: CreateRxInvestigationDTO[];
 
-
-
   @IsOptional() // Make optional
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateRxAdviceDTO)
   rxAdvice?: CreateRxAdviceDTO[];
-
-  
 
   @IsOptional()
   @IsArray()
