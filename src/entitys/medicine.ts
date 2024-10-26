@@ -27,8 +27,8 @@ export class Medicine {
   categoryId: number;
   @Column({ nullable: true })
   strength: string;
-  @Column({ default: 1})
-  orgId: number
+  @Column({ default: 1 })
+  orgId: number;
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
@@ -45,8 +45,8 @@ export class Medicine {
 
   @ManyToOne(() => Doctor, (doc) => doc.medicine, {
     nullable: true,
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'doctorId'})
-  doctor: Doctor
+  @JoinColumn({ name: 'doctorId' })
+  doctor: Doctor;
 }

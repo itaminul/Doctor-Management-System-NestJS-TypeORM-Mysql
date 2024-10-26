@@ -16,9 +16,6 @@ export class pat_patients_info {
   name: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
-  fullName: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
   email: string;
   @Column({ type: 'varchar', length: 50, nullable: true })
   SL_NO: string;
@@ -91,21 +88,6 @@ export class pat_patients_info {
 
   @Column({ type: 'datetime', nullable: true })
   OTP_REQ_TIME: Date;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  APPOINT_DESC: string;
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  DESCRIPTOIN: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  firebase_token: string;
-
-  @Column({ type: 'varchar', length: 10, nullable: true })
-  BLOOD_GROUP: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  PROFILE_IMAGE: string;
-
   @OneToMany(() => Patientsrx, (patRx) => patRx.patPatientInfo, {
     nullable: true,
     onDelete: 'CASCADE',

@@ -5,6 +5,7 @@ import {
   OneToMany,
   JoinColumn,
   ManyToMany,
+  ManyToOne,
 } from 'typeorm';
 import { Rxmedicine } from './rxmedicine';
 import { Rxexaminations } from './rxexaminations';
@@ -74,12 +75,13 @@ export class Patientsrx {
   })
   rxComplains: Rxcomplains[];
 
-  @ManyToMany(
+  @ManyToOne(
     () => pat_patients_info,
     (patPatientInfo) => patPatientInfo.patientsrx,
     {
       nullable: true,
       onDelete: 'CASCADE',
+      eager: true,
     },
   )
   @JoinColumn({ name: 'patientId' })
