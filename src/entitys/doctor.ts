@@ -4,8 +4,11 @@ import {
   Column,
   UpdateDateColumn,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { Medicine } from './medicine';
+import { Patientsrx } from './patientsrx';
+import { pat_patients_info } from './pat_patients_info';
 
 @Entity('doctor')
 export class Doctor {
@@ -63,7 +66,10 @@ export class Doctor {
 
   @OneToMany(() => Medicine, (medi) => medi.doctor, {
     nullable: true,
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
-  medicine: Medicine[]
+  medicine: Medicine[];
+
+  @OneToMany(() => pat_patients_info, patientInfo => patientInfo.patPatienInfo)
+  doctorInfo: pat_patients_info[];patPatienInfo
 }

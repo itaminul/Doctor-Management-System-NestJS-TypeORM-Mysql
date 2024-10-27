@@ -13,6 +13,7 @@ import { RxInvestigations } from './rxinvestigations';
 import { RxAdvice } from './rxadvice';
 import { Rxcomplains } from './rxcomplains';
 import { pat_patients_info } from './pat_patients_info';
+import { Doctor } from './doctor';
 
 @Entity('patientsrx')
 export class Patientsrx {
@@ -86,6 +87,6 @@ export class Patientsrx {
   )
   @JoinColumn({ name: 'patientId' })
   patPatientInfo: pat_patients_info;
-  @Column({ nullable: true }) // Adjust the type and options as necessary
-  patientId: number; // Ensure this field exists if you're storing it
+  @Column({ nullable: true })
+  patientId: number;
 }

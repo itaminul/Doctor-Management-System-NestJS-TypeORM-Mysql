@@ -92,7 +92,10 @@ export class CreatepatientsrxService {
 */
       const data = await this.patientRxRepository.find({
         relations: {
-          patPatientInfo: true,
+          patPatientInfo: {
+            doctor: true,
+          },
+          //patPatientDocInfo: true,
           rxmedicine: {
             medicine: true,
           },
@@ -116,10 +119,15 @@ export class CreatepatientsrxService {
 
       const formattedData = data.map((patientdata) => ({
         patientId: patientdata.patPatientInfo.id,
-        patients: patientdata.patPatientInfo.name,
+        patientsName: patientdata.patPatientInfo.name,
+        patientDoctorId: patientdata.patPatientInfo.id,
+        doctorId: patientdata.patPatientInfo.doctor.id,
+        doctorName: patientdata.patPatientInfo.doctor.name,
+        rxDate: patientdata.RXDATE,
+        followUp: patientdata.followUp,
         medicines: patientdata.rxmedicine.map((medicine) => ({
           patientId: patientdata.patPatientInfo.id,
-          rxmedicine: medicine.id,
+          rxmedicineId: medicine.id,
           medicineId: medicine.medicine.id,
           medicineName: medicine.medicine.medicineName,
         })),
@@ -135,6 +143,19 @@ export class CreatepatientsrxService {
           rxExaminationId: examination.id,
           setExaminationId: examination.setExamination.id,
           examinationName: examination.setExamination.name,
+        })),
+
+        comlains: patientdata.rxComplains.map((complain) => ({
+          patientId: patientdata.patPatientInfo.id,
+          rxComplianId: complain.id,
+          setComplainId: complain.complains.id,
+          complainName: complain.complains.name,
+        })),
+        advices: patientdata.rxAdvice.map((advice) => ({
+          patientId: patientdata.patPatientInfo.id,
+          rxAdviceId: advice.id,
+          setAdviceId: advice.setAdvice.id,
+          adviceName: advice.setAdvice.name,
         })),
       }));
 
