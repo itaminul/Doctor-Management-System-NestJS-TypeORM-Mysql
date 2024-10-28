@@ -15,6 +15,16 @@ export class Rxmedicine {
   @Column({ nullable: true })
   doses: string;
   @Column({ nullable: true })
+  numberOfTimes: number;
+  @Column({ nullable: true })
+  morning: number;
+  @Column({ nullable: true })
+  lunch: number;
+  @Column({ nullable: true })
+  evening: number;
+  @Column({ nullable: true })
+  night: number;
+  @Column({ nullable: true })
   isContinue: number;
   @Column({ nullable: true })
   duration: string;
