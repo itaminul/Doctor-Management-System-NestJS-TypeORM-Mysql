@@ -19,9 +19,9 @@ export const AppDataSource: DataSourceOptions = {
   type: 'mysql',
   host: '192.168.0.106',
   port: 3306,
-  username: 'qms_uat', // Update with your MySQL username
-  password: 'qms_uat', // Update with your MySQL password
-  database: 'qms_uat', // Update with your MySQL database name
+  username: 'qms_uat', 
+  password: 'qms_uat',
+  database: 'qms_uat', 
   entities: [
     PatPatientsInformation,
     Patientsrx,

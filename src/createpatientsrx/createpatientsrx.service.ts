@@ -95,7 +95,6 @@ export class CreatepatientsrxService {
           patPatientInfo: {
             doctor: true,
           },
-          //patPatientDocInfo: true,
           rxmedicine: {
             medicine: true,
           },
@@ -130,6 +129,11 @@ export class CreatepatientsrxService {
           rxmedicineId: medicine.id,
           medicineId: medicine.medicine.id,
           medicineName: medicine.medicine.medicineName,
+          numberOfTimes: medicine.numberOfTimes,
+          morning: medicine.morning,
+          lunch: medicine.lunch,
+          evening: medicine.evening,
+          night: medicine.night,
         })),
         investigations: patientdata.rxInvestigations.map((investigation) => ({
           patientId: patientdata.patPatientInfo.id,
