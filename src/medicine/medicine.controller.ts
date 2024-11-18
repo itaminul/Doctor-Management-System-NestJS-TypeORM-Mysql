@@ -56,4 +56,9 @@ export class MedicineController {
   ) {
     return await this.medicineService.update(id, updateMediDto);
   }
+
+  @Get('get-priority-medicine')
+  async getPriorityMedicine() {
+    return await this.medicineService.getPriorityMedicine();
+  }
 }
