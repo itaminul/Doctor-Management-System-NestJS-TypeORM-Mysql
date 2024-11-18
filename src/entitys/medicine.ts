@@ -27,6 +27,8 @@ export class Medicine {
   categoryId: number;
   @Column({ nullable: true })
   strength: string;
+  @Column({ default: 0 })
+  priorityStatus: number;
   @Column({ default: 1 })
   orgId: number;
   activeStatus: number;

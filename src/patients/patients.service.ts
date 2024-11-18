@@ -80,4 +80,32 @@ export class PatientsService {
       );
     }
   }
+
+  async getNewTwentityPendingPatients() {
+    try {
+      const results = await this.setPatientInformation.find({
+        where: {
+          PATIENT_STATUS: 0,
+        },
+        select: {
+          id: true,
+          name: true,
+          SL_NO: true
+        },
+        order: {
+          id: 'ASC'
+        },
+        take: 20
+      });
+      return results;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
