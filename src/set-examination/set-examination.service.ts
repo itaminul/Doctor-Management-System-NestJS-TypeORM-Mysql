@@ -11,6 +11,21 @@ export class SetExaminationService {
     public readonly setExaminationRepository: Repository<SetExamination>,
   ) {}
 
+  async getAll() {
+    try {
+      const results = await this.setExaminationRepository.find();
+      return results;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async create(createSetupExamination: SetupExaminationDto) {
     try {
       const examSetupdata = this.setExaminationRepository.create(

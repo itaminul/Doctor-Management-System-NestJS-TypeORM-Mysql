@@ -12,6 +12,7 @@ import { CreateMedicineDTO } from './dto/create.medicine.dto';
 import { UpdateMedicineDTO } from './dto/update.medicine.dto';
 import { Doctor } from 'src/entitys/doctor';
 
+
 @Injectable()
 export class MedicineService {
   constructor(
@@ -99,6 +100,7 @@ export class MedicineService {
           priorityStatus: 1,
         },
         select: {
+          id: true,
           medicineName: true,
           strength: true,
         },

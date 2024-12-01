@@ -2,13 +2,9 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Patch,
-  Post,
-  Put,
-  UseInterceptors,
+  Post
 } from '@nestjs/common';
 import { CreatepatientsrxService } from './createpatientsrx.service';
 import { CreatePatientsRxDTO } from './dto/patientrx.dto';
@@ -19,8 +15,7 @@ export class CreatepatientsrxController {
   constructor(public readonly createPatientService: CreatepatientsrxService) {}
   @Get()
   async getAll() {
-    const results = await this.createPatientService.getAll();
-    return results;
+    return await this.createPatientService.getAll();
   }
 
   @Post()
@@ -34,5 +29,12 @@ export class CreatepatientsrxController {
     @Body() updatePatDtp: UpdatePatientsRxDTO,
   ) {
     return await this.createPatientService.update(id, updatePatDtp);
+  }
+
+  @Get('/get-patient-by-id/:id')
+  async getPatientById(
+    @Param('id') id: number
+  ) {
+    return await this.createPatientService.getPatientById(id);
   }
 }
