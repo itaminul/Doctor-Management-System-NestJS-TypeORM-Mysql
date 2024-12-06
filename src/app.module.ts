@@ -12,10 +12,11 @@ import { SetupAdviceModule } from './setup-advice/setup-advice.module';
 import { SetExaminationModule } from './set-examination/set-examination.module';
 import { DoctorModule } from './doctor/doctor.module';
 import { UsersModule } from './users/users.module';
+import { PatientsModule } from './patients/patients.module';
 
 
 @Module({
-  imports: [ TypeOrmModule.forRoot(AppDataSource), CreatepatientsrxModule, MedicineModule, ComplainModule, SetInvestigationModule, SetupAdviceModule, SetExaminationModule, DoctorModule, UsersModule],
+  imports: [ TypeOrmModule.forRoot(AppDataSource), CreatepatientsrxModule, MedicineModule, ComplainModule, SetInvestigationModule, SetupAdviceModule, SetExaminationModule, DoctorModule, UsersModule, PatientsModule],
   controllers: [AppController],
   providers: [AppService],
 })
