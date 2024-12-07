@@ -91,4 +91,30 @@ export class MedicineService {
       );
     }
   }
+
+  async getPriorityMedicine() {
+    try {
+      return await this.medicineRepository.find({
+        where: {
+          priorityStatus: 1,
+        },
+        select: {
+          medicineName: true,
+          strength: true,
+        },
+        order: {
+          slNo: 'ASC',
+        },
+        take: 20,
+      });
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
