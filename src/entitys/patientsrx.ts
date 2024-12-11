@@ -90,3 +90,4 @@ export class Patientsrx {
   @Column({ nullable: true })
   patientId: number;
 }
+
