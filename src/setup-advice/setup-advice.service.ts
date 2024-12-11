@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SetAdvice } from 'src/entitys/setAdvice';
 import { Repository } from 'typeorm';
@@ -38,6 +43,32 @@ export class SetupAdviceService {
       }
       throw new HttpException(
         'internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async update(id: number, createSetupAdviceDto: CreateSetupAdviceDto) {
+    try {
+      const adviceetupData = await this.setupAdviceRepository.findOne({
+        where: {
+          id: id,
+        },
+      });
+
+      if (!adviceetupData) {
+        throw new NotFoundException(`Exam setup with ID ${id} not found`);
+      }
+
+      Object.assign(adviceetupData, createSetupAdviceDto);
+
+      return await this.setupAdviceRepository.save(adviceetupData);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Internal server error',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
