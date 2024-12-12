@@ -14,9 +14,19 @@ import { DoctorModule } from './doctor/doctor.module';
 import { UsersModule } from './users/users.module';
 import { PatientsModule } from './patients/patients.module';
 
-
 @Module({
-  imports: [ TypeOrmModule.forRoot(AppDataSource), CreatepatientsrxModule, MedicineModule, ComplainModule, SetInvestigationModule, SetupAdviceModule, SetExaminationModule, DoctorModule, UsersModule, PatientsModule],
+  imports: [
+    TypeOrmModule.forRoot(AppDataSource),
+    CreatepatientsrxModule,
+    MedicineModule,
+    ComplainModule,
+    SetInvestigationModule,
+    SetupAdviceModule,
+    SetExaminationModule,
+    DoctorModule,
+    UsersModule,
+    PatientsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

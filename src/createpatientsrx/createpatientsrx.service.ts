@@ -1,4 +1,10 @@
-import { Body, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  Body,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Param,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Patientsrx } from 'src/entitys/patientsrx';
 import { Rxexaminations } from 'src/entitys/rxexaminations';
@@ -186,6 +192,7 @@ export class CreatepatientsrxService {
         rxComplains,
         ...patientData
       } = createPatientDto;
+      console.log('createPatientDto', createPatientDto);
       const patientDataa = this.patientRxRepository.create(patientData);
       const savePatientRx = await this.patientRxRepository.save(patientDataa);
       const medicineMap = new Map<number, Medicine>();
@@ -839,6 +846,97 @@ export class CreatepatientsrxService {
       }
 
       return this.patientRxRepository.save(patient);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getPatientById(@Param('id') id: number) {
+    try {
+      const data = await this.patientRxRepository.findOne({
+        where: {
+          id: id,
+        },
+        relations: {
+          patPatientInfo: {
+            doctor: true,
+          },
+          rxmedicine: {
+            medicine: true,
+          },
+          rxInvestigations: {
+            setInvestigations: true,
+          },
+          rxexaminations: {
+            setExamination: true,
+          },
+          rxComplains: {
+            complains: true,
+          },
+          rxAdvice: {
+            setAdvice: true,
+          },
+        },
+        order: {
+          id: 'DESC',
+        },
+      });
+
+      // const formattedData = data.map((patientdata) => ({
+      //   patientId: patientdata.patPatientInfo.id,
+      //   patientsName: patientdata.patPatientInfo.name,
+      //   patientDoctorId: patientdata.patPatientInfo.id,
+      //   doctorId: patientdata.patPatientInfo.doctor.id,
+      //   doctorName: patientdata.patPatientInfo.doctor.name,
+      //   rxDate: patientdata.RXDATE,
+      //   followUp: patientdata.followUp,
+      //   medicines: patientdata.rxmedicine.map((medicine) => ({
+      //     patientId: patientdata.patPatientInfo.id,
+      //     rxmedicineId: medicine.id,
+      //     medicineId: medicine.medicine.id,
+      //     medicineName: medicine.medicine.medicineName,
+      //     numberOfTimes: medicine.numberOfTimes,
+      //     morning: medicine.morning,
+      //     lunch: medicine.lunch,
+      //     evening: medicine.evening,
+      //     night: medicine.night,
+      //   })),
+      //   investigations: patientdata.rxInvestigations.map((investigation) => ({
+      //     patientId: patientdata.patPatientInfo.id,
+      //     rxInvestigationId: investigation.id,
+      //     setInvestigationId: investigation.setInvestigations.id,
+      //     investigationName: investigation.setInvestigations.name,
+      //   })),
+
+      //   examinations: patientdata.rxexaminations.map((examination) => ({
+      //     patientId: patientdata.patPatientInfo.id,
+      //     rxExaminationId: examination.id,
+      //     setExaminationId: examination.setExamination.id,
+      //     examinationName: examination.setExamination.name,
+      //   })),
+
+      //   comlains: patientdata.rxComplains.map((complain) => ({
+      //     patientId: patientdata.patPatientInfo.id,
+      //     rxComplianId: complain.id,
+      //     setComplainId: complain.complains.id,
+      //     complainName: complain.complains.name,
+      //   })),
+      //   advices: patientdata.rxAdvice.map((advice) => ({
+      //     patientId: patientdata.patPatientInfo.id,
+      //     rxAdviceId: advice.id,
+      //     setAdviceId: advice.setAdvice.id,
+      //     adviceName: advice.setAdvice.name,
+      //   })),
+      // }));
+
+      return data;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

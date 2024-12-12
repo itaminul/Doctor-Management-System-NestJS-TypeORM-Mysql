@@ -11,6 +11,21 @@ export class SetupAdviceService {
     public readonly setupAdviceRepository: Repository<SetAdvice>,
   ) {}
 
+  async getAll() {
+    try {
+      const results = await this.setupAdviceRepository.find();
+      return results;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async create(createSetupAdvice: CreateSetupAdviceDto) {
     try {
       const { ...setupMedicine } = createSetupAdvice;
