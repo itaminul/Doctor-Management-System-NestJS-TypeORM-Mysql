@@ -71,5 +71,5 @@ export class Doctor {
   medicine: Medicine[];
 
   @OneToMany(() => pat_patients_info, patientInfo => patientInfo.patPatienInfo)
-  doctorInfo: pat_patients_info[];patPatienInfo
+  doctorInfo: pat_patients_info[];
 }

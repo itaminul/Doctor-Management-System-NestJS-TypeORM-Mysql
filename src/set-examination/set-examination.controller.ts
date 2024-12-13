@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { SetupExaminationDto } from './dto/create.set.examination.dto';
 import { SetExaminationService } from './set-examination.service';
+import { UpdateExaminationDto } from './dto/update.set.examination.dto';
 
 @Controller('set-examination')
 export class SetExaminationController {
@@ -14,5 +23,20 @@ export class SetExaminationController {
   @Post()
   async create(@Body() setupExaminationDto: SetupExaminationDto) {
     return await this.exampSetupService.create(setupExaminationDto);
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateExaminationDto: UpdateExaminationDto,
+  ) {
+    const updatedExamSetup = await this.exampSetupService.update(
+      id,
+      updateExaminationDto,
+    );
+    if (!updatedExamSetup) {
+      throw new NotFoundException(`Exam setup with ID ${id} not found`);
+    }
+    return updatedExamSetup;
   }
 }

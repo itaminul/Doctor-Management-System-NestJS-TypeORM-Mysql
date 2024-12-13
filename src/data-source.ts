@@ -19,9 +19,9 @@ export const AppDataSource: DataSourceOptions = {
   type: 'mysql',
   host: '192.168.0.106',
   port: 3306,
-  username: 'qms_uat', 
-  password: 'qms_uat',
-  database: 'qms_uat', 
+  username: 'queue_management',
+  password: 'queue_db#',
+  database: 'queue_management',
   entities: [
     PatPatientsInformation,
     Patientsrx,
@@ -37,7 +37,7 @@ export const AppDataSource: DataSourceOptions = {
     SetExamination,
     Doctor,
     Users,
-    pat_patients_info
+    pat_patients_info,
   ],
   // migrations: ['./src/migrations/*.ts'], // For TypeScript files
   migrations: ['./dist/migrations/*.js'],

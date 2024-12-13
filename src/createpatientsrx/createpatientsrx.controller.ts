@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreatepatientsrxService } from './createpatientsrx.service';
 import { CreatePatientsRxDTO } from './dto/patientrx.dto';
 import { UpdatePatientsRxDTO } from './dto/updatePatientrx.dto';
@@ -32,9 +25,7 @@ export class CreatepatientsrxController {
   }
 
   @Get('/get-patient-by-id/:id')
-  async getPatientById(
-    @Param('id') id: number
-  ) {
+  async getPatientById(@Param('id') id: number) {
     return await this.createPatientService.getPatientById(id);
   }
 }
