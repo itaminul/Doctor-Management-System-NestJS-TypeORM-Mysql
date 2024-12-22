@@ -4,6 +4,8 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { ComplainService } from './complain.service';
@@ -43,6 +45,34 @@ export class ComplainController {
         success: true,
         statusCode: HttpStatus.OK,
         message: 'Createded successfully',
+        data: results,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        throw new HttpException(
+          'Failed to create',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() createComplainRxDto: CreateComplainDTO,
+  ) {
+    try {
+      const results = await this.complainService.update(
+        id,
+        createComplainRxDto,
+      );
+      return {
+        success: true,
+        statusCode: HttpStatus.OK,
+        message: 'Updated successfully',
         data: results,
       };
     } catch (error) {

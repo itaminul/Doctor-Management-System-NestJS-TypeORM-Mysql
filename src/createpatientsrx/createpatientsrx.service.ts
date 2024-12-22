@@ -123,7 +123,7 @@ export class CreatepatientsrxService {
         },
       });
 
-      const formattedData = data.map((patientdata) => ({
+     /* const formattedData = data.map((patientdata) => ({
         patientId: patientdata.patPatientInfo.id,
         patientsName: patientdata.patPatientInfo.name,
         patientDoctorId: patientdata.patPatientInfo.id,
@@ -169,8 +169,8 @@ export class CreatepatientsrxService {
           adviceName: advice.setAdvice.name,
         })),
       }));
-
-      return formattedData;
+*/
+      return data;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -193,7 +193,7 @@ export class CreatepatientsrxService {
         rxComplains,
         ...patientData
       } = createPatientDto;
-      console.log('save data', createPatientDto);
+      console.log('save data in prescription', createPatientDto);
       const patientDataa = this.patientRxRepository.create(patientData);
       const savePatientRx = await this.patientRxRepository.save(patientDataa);
       const medicineMap = new Map<number, Medicine>();
@@ -201,6 +201,13 @@ export class CreatepatientsrxService {
       const complainMap = new Map<number, Complains>();
       const setAdviceMap = new Map<number, SetAdvice>();
       const setExaminationMap = new Map<number, SetExamination>();
+
+      /*
+        const statuUpdate =  this.patientSetupRepository.save({
+      id, ...patientData
+       })
+       return this.patientSetupRepository.save({ id: 33, ...patientData });
+      */
 
       if (rxmedicine && rxmedicine.length > 0) {
         for (const medicineDto of rxmedicine) {
@@ -901,55 +908,57 @@ export class CreatepatientsrxService {
         },
       });
 
+    //https://erp.atilimited.net/api/api-leave-email
+      // const formattedData = ({
+      //   patientId: data.patPatientInfo.id,
+      //   patientsName: data.patPatientInfo.name,
+      //    patientDoctorId: data.patPatientInfo.id,
+      //   // doctorId: data.patPatientInfo.doctor.id,
+      //  // doctorName: data.patPatientInfo.doctor.name,
+      //   rxDate: data.RXDATE,
+      //   followUp: data.followUp,
+      //   medicines: data.rxmedicine.map((medicine) => ({
+      //     patientId: data.patPatientInfo.id,
+      //     rxmedicineId: medicine.id,
+      //     medicineId: medicine.medicine.id,
+      //     medicineName: medicine.medicine.medicineName,
+      //     numberOfTimes: medicine.numberOfTimes,
+      //     morning: medicine.morning,
+      //     lunch: medicine.lunch,
+      //     evening: medicine.evening,
+      //     night: medicine.night,
+      //     duration: medicine.duration,
+      //     remarks: medicine.remarks,
+      //   })),
+      //   investigations: data.rxInvestigations.map((investigation) => ({
+      //     patientId: data.patPatientInfo.id,
+      //     rxInvestigationId: investigation.id,
+      //     setInvestigationId: investigation.setInvestigations.id,
+      //     investigationName: investigation.setInvestigations.name,
+      //   })),
 
-      const formattedData = ({
-        patientId: data.patPatientInfo.id,
-        patientsName: data.patPatientInfo.name,
-         patientDoctorId: data.patPatientInfo.id,
-        // doctorId: data.patPatientInfo.doctor.id,
-       // doctorName: data.patPatientInfo.doctor.name,
-        rxDate: data.RXDATE,
-        followUp: data.followUp,
-        medicines: data.rxmedicine.map((medicine) => ({
-          patientId: data.patPatientInfo.id,
-          rxmedicineId: medicine.id,
-          medicineId: medicine.medicine.id,
-          medicineName: medicine.medicine.medicineName,
-          numberOfTimes: medicine.numberOfTimes,
-          morning: medicine.morning,
-          lunch: medicine.lunch,
-          evening: medicine.evening,
-          night: medicine.night,
-        })),
-        investigations: data.rxInvestigations.map((investigation) => ({
-          patientId: data.patPatientInfo.id,
-          rxInvestigationId: investigation.id,
-          setInvestigationId: investigation.setInvestigations.id,
-          investigationName: investigation.setInvestigations.name,
-        })),
+      //   examinations: data.rxexaminations.map((examination) => ({
+      //     patientId: data.patPatientInfo.id,
+      //     rxExaminationId: examination.id,
+      //     setExaminationId: examination.setExamination.id,
+      //     examinationName: examination.setExamination.name,
+      //   })),
 
-        examinations: data.rxexaminations.map((examination) => ({
-          patientId: data.patPatientInfo.id,
-          rxExaminationId: examination.id,
-          setExaminationId: examination.setExamination.id,
-          examinationName: examination.setExamination.name,
-        })),
+      //   complains: data.rxComplains.map((complain) => ({
+      //     patientId: data.patPatientInfo.id,
+      //     rxComplianId: complain.id,
+      //     setComplainId: complain.complains.id,
+      //     complainName: complain.complains.name,
+      //   })),
+      //   advices: data.rxAdvice.map((advice) => ({
+      //     patientId: data.patPatientInfo.id,
+      //     rxAdviceId: advice.id,
+      //     setAdviceId: advice.setAdvice.id,
+      //     adviceName: advice.setAdvice.name,
+      //   })),
+      // });
 
-        comlains: data.rxComplains.map((complain) => ({
-          patientId: data.patPatientInfo.id,
-          rxComplianId: complain.id,
-          setComplainId: complain.complains.id,
-          complainName: complain.complains.name,
-        })),
-        advices: data.rxAdvice.map((advice) => ({
-          patientId: data.patPatientInfo.id,
-          rxAdviceId: advice.id,
-          setAdviceId: advice.setAdvice.id,
-          adviceName: advice.setAdvice.name,
-        })),
-      });
-
-      return formattedData;
+      return data;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -962,3 +971,4 @@ export class CreatepatientsrxService {
     }
   }
 }
+

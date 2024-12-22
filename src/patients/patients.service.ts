@@ -12,12 +12,21 @@ export class PatientsService {
 
   async getAll() {
     try {
-      const results = await this.setPatientInformation.find({
+      const results1 = await this.setPatientInformation.find({
         select: {
           id: true,
           name: true,
         },
       });
+
+      const results = await this.setPatientInformation
+        .createQueryBuilder('spi')
+        .leftJoin('patientsrx', 'pr', 'spi.id = pr.patientId')
+        .where('spi.PATIENT_STATUS = :status', { status: 0 })
+        .andWhere('pr.patientId IS NULL')
+        .select(['spi.id', 'spi.name', 'spi.SL_NO'])
+        .orderBy('spi.id', 'ASC')
+        .getMany();
       return results;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -83,19 +92,29 @@ export class PatientsService {
 
   async getNewTwentityPendingPatients() {
     try {
-      const results = await this.setPatientInformation.find({
+      const results = await this.setPatientInformation
+        .createQueryBuilder('spi')
+        .leftJoin('patientsrx', 'pr', 'spi.id = pr.patientId')
+        .where('spi.PATIENT_STATUS = :status', { status: 0 })
+        .andWhere('pr.patientId IS NULL')
+        .select(['spi.id', 'spi.name', 'spi.SL_NO'])
+        .orderBy('spi.id', 'ASC')
+        .take(20)
+        .getMany();
+
+      const results1 = await this.setPatientInformation.find({
         where: {
           PATIENT_STATUS: 0,
         },
         select: {
           id: true,
           name: true,
-          SL_NO: true
+          SL_NO: true,
         },
         order: {
-          id: 'ASC'
+          id: 'ASC',
         },
-        take: 20
+        take: 20,
       });
       return results;
     } catch (error) {

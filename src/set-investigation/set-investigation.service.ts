@@ -29,7 +29,7 @@ export class SetInvestigationService {
 
   async update(id: number, setInvestigationDto: SetInvestigationDto) {
     try {
-      console.log('id', id);
+      console.log('service', id);
       const examSetupData = await this.setInvestigationRepository.findOne({
         where: {
           id: id,

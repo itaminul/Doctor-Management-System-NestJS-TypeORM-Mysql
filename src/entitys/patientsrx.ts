@@ -4,7 +4,6 @@ import {
   Column,
   OneToMany,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
 } from 'typeorm';
 import { Rxmedicine } from './rxmedicine';
@@ -13,7 +12,6 @@ import { RxInvestigations } from './rxinvestigations';
 import { RxAdvice } from './rxadvice';
 import { Rxcomplains } from './rxcomplains';
 import { pat_patients_info } from './pat_patients_info';
-import { Doctor } from './doctor';
 
 @Entity('patientsrx')
 export class Patientsrx {

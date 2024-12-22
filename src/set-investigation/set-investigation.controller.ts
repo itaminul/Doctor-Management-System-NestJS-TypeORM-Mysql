@@ -27,6 +27,7 @@ export class SetInvestigationController {
     @Param('id') id: number,
     @Body() setInvestigationDto: SetInvestigationDto,
   ) {
+    console.log("con", id)
     const updatedExamSetup = await this.setInventoryService.update(
       id,
       setInvestigationDto,
