@@ -16,4 +16,7 @@ export class CreateSetupAdviceDto {
   @IsOptional()
   @IsNumber()
   slNo: number;
+  @IsOptional()
+  @IsNumber()
+  activeStatus: number;
 }

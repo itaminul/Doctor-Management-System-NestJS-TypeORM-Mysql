@@ -411,6 +411,234 @@ export class CreatepatientsrxService {
     }
   }
 
+  async createNew(@Body() createPatientDto: any) {
+    try {
+      const {
+        rxmedicine,
+        rxexaminations,
+        rxInvestigations,
+        rxadvice,
+        rxComplains,
+        ...patientData
+      } = createPatientDto;
+      console.log('save data in prescription', createPatientDto);
+      const patientDataa = this.patientRxRepository.create(patientData);
+      const savePatientRx = await this.patientRxRepository.save(patientDataa);
+      const medicineMap = new Map<number, Medicine>();
+      const investigationMap = new Map<number, Set_investigations>();
+      const complainMap = new Map<number, Complains>();
+      const setAdviceMap = new Map<number, SetAdvice>();
+      const setExaminationMap = new Map<number, SetExamination>();
+
+      /*
+        const statuUpdate =  this.patientSetupRepository.save({
+      id, ...patientData
+       })
+       return this.patientSetupRepository.save({ id: 33, ...patientData });
+      */
+
+      if (rxmedicine && rxmedicine.length > 0) {
+        for (const medicineDto of rxmedicine) {
+          let medicine: any;
+
+          if (medicineDto.medicineId) {
+            // Check if the medicine is already processed
+            if (medicineMap.has(medicineDto.medicineId)) {
+              medicine = medicineMap.get(medicineDto.medicineId);
+            } else {
+              // Find the existing Medicine by ID
+              medicine = await this.medicineRepositor.findOne({
+                where: { id: medicineDto.medicineId },
+              });
+
+              if (!medicine) {
+                throw new Error(
+                  `Medicine with id ${medicineDto.medicineId} not found`,
+                );
+              }
+
+              medicineMap.set(medicineDto.medicineId, medicine);
+            }
+          } else {
+            // Create a new Medicine if needed
+            medicine = this.medicineRepositor.create(medicineDto);
+            medicine = await this.medicineRepositor.save(medicine);
+            medicineMap.set(medicine.id, medicine);
+          }
+          const rmedicine = this.rxMedicineRepository.create({
+            ...medicineDto,
+            patientsrx: savePatientRx,
+            medicine: medicine,
+          });
+
+          await this.rxMedicineRepository.save(rmedicine);
+        }
+      }
+
+      //investigation
+      if (rxInvestigations && rxInvestigations.length > 0) {
+        for (const rxInvestigationsDto of rxInvestigations) {
+          let setInvestigation: any;
+          if (rxInvestigationsDto.investigationId) {
+            if (investigationMap.has(rxInvestigationsDto.investigationId)) {
+              setInvestigation = investigationMap.get(
+                rxInvestigationsDto.investigationId,
+              );
+            } else {
+              setInvestigation = await this.setInvestigationRepository.findOne({
+                where: { id: rxInvestigationsDto.investigationId },
+              });
+            }
+
+            if (!setInvestigation) {
+              throw new Error(
+                `Medicine with id ${rxInvestigationsDto.investigationId} not found`,
+              );
+            }
+
+            investigationMap.set(
+              rxInvestigationsDto.investigationId,
+              setInvestigation,
+            );
+          } else {
+            setInvestigation =
+              this.rxInvestigationsRepository.create(rxInvestigationsDto);
+            setInvestigation =
+              await this.setInvestigationRepository.save(setInvestigation);
+            investigationMap.set(setInvestigation.id, setInvestigation);
+          }
+          const investigation = this.rxInvestigationsRepository.create({
+            ...rxInvestigationsDto,
+            patientsrx: savePatientRx,
+            setInvestigations: setInvestigation,
+          });
+          await this.rxInvestigationsRepository.save(investigation);
+        }
+      }
+
+      // const investigations = rxInvestigations.map(investigationDto => {
+
+      //     const investigation = this.rxInvestigationsRepository.create({
+      //         ...rxInvestigations,
+      //         patientsrx: savePatientRx
+      //     })
+      //     return investigation;
+      // })
+      // await this.rxInvestigationsRepository.save(investigations);
+
+      //rxComplains
+      if (rxComplains && rxComplains.length > 0) {
+        for (const rxComplainDto of rxComplains) {
+          let setRxComplain: any;
+          if (rxComplainDto.complainId) {
+            if (complainMap.has(rxComplainDto.complainId)) {
+              setRxComplain = complainMap.get(rxComplainDto.complainId);
+            } else {
+              setRxComplain = await this.setComplainRepository.findOne({
+                where: { id: rxComplainDto.complainId },
+              });
+            }
+
+            if (!complainMap) {
+              throw new Error(
+                `Complain with id ${rxComplainDto.complainId} not found`,
+              );
+            }
+            complainMap.set(rxComplainDto.complainId, setRxComplain);
+          } else {
+            setRxComplain = this.rxComplainRepositor.create(rxComplainDto);
+            setRxComplain =
+              await this.setComplainRepository.save(setRxComplain);
+            complainMap.set(setRxComplain.id, setRxComplain);
+          }
+          const complain = this.rxComplainRepositor.create({
+            ...rxComplainDto,
+            patientsrx: savePatientRx,
+            complains: setRxComplain,
+          });
+
+          await this.rxComplainRepositor.save(complain);
+        }
+      }
+
+      if (rxexaminations && rxexaminations.length > 0) {
+        for (const rxExaminationDto of rxexaminations) {
+          let setExaminations: any;
+          if (rxExaminationDto.examinationId) {
+            if (setExaminationMap.has(rxExaminationDto.examinationId)) {
+              setExaminations = setExaminationMap.has(
+                rxExaminationDto.examinationId,
+              );
+            } else {
+              setExaminations = await this.setExaminationRepository.findOne({
+                where: { id: rxExaminationDto.examinationId },
+              });
+            }
+            if (!setExaminationMap) {
+              throw new Error(
+                `Examinatin id ${rxExaminationDto.examinationId} not found`,
+              );
+            }
+          } else {
+            setExaminations =
+              this.rxExaminationsRepository.create(rxExaminationDto);
+            setExaminations =
+              await this.setExaminationRepository.save(setExaminations);
+            setExaminationMap.set(setExaminations.id, setExaminations);
+          }
+          const examination = this.rxExaminationsRepository.create({
+            ...rxExaminationDto,
+            patientsrx: savePatientRx,
+            setExamination: setExaminations,
+          });
+          await this.rxExaminationsRepository.save(examination);
+        }
+      }
+
+      //rxadvice
+      if (rxadvice && rxadvice.length > 0) {
+        for (const rxAdviceDto of rxadvice) {
+          let setAdvice: any;
+          if (rxAdviceDto.adviceId) {
+            if (setAdviceMap.has(rxAdviceDto.adviceId)) {
+              setAdvice = setAdviceMap.has(rxAdviceDto.adviceId);
+            } else {
+              setAdvice = await this.setAdviceRepository.findOne({
+                where: { id: rxAdviceDto.adviceId },
+              });
+            }
+
+            if (!setAdviceMap) {
+              throw new Error(`Advice ${rxAdviceDto.adviceId} not found`);
+            }
+            setAdviceMap.set(rxAdviceDto.adviceId, setAdvice);
+          } else {
+            setAdvice = this.rxAdviceRepository.create(rxAdviceDto);
+            setAdvice = await this.setAdviceRepository.save(setAdvice);
+            setAdviceMap.set(setAdvice.id, setAdvice);
+          }
+
+          const advices = this.rxAdviceRepository.create({
+            ...rxAdviceDto,
+            patientsrx: savePatientRx,
+            setAdvice: setAdvice,
+          });
+          await this.rxAdviceRepository.save(advices);
+        }
+      }
+
+      return savePatientRx;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async update(id: number, updatePatientsRxDTO: UpdatePatientsRxDTO) {
     try {
       const {

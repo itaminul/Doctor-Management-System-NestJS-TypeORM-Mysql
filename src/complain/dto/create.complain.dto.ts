@@ -16,4 +16,7 @@ export class CreateComplainDTO {
   @IsNumber()
   @IsOptional()
   complainId?: number;
+  @IsOptional()
+  @IsNumber()
+  activeStatus: number;
 }

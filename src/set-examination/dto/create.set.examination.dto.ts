@@ -16,4 +16,7 @@ export class SetupExaminationDto {
   @IsString()
   @IsOptional()
   description: string;
+  @IsOptional()
+  @IsNumber()
+  activeStatus: number;
 }

@@ -19,6 +19,7 @@ export class SetAdvice {
   slNo: number;
   @Column()
   remarks: string;
+  @Column()
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

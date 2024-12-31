@@ -19,7 +19,11 @@ export class SetExaminationService {
 
   async getAll() {
     try {
-      const results = await this.setExaminationRepository.find();
+      const results = await this.setExaminationRepository.find({
+        order: {
+          slNo: 'ASC'
+        }
+      });
       return results;
     } catch (error) {
       if (error instanceof HttpException) {

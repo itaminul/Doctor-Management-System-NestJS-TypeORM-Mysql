@@ -4,7 +4,6 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  Validate,
   ValidateNested,
 } from 'class-validator';
 import { CreateDoctorDTO } from 'src/doctor/dto/create.doctor.dto';
@@ -40,6 +39,12 @@ export class UpdateMedicineDTO {
   @IsString()
   @IsOptional()
   strength: string;
+  @IsNumber()
+  @IsOptional()
+  priorityStatus: number;
+  @IsOptional()
+  @IsNumber()
+  activeStatus: number;
 
   @IsOptional()
   @IsArray()
