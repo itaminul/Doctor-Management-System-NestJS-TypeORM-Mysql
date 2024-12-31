@@ -12,7 +12,7 @@ export class CreatepatientsrxController {
   }
 
   @Post()
-  async create(@Body() createPatientRxDto: CreatePatientsRxDTO) {
+  async create(@Body() createPatientRxDto: any) {
     return await this.createPatientService.create(createPatientRxDto);
   }
 

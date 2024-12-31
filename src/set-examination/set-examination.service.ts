@@ -65,6 +65,7 @@ export class SetExaminationService {
 
       Object.assign(examSetupData, updateExaminationDto);
 
+
       return await this.setExaminationRepository.save(examSetupData);
     } catch (error) {
       if (error instanceof HttpException) {

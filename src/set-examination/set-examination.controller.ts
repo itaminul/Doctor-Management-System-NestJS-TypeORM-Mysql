@@ -34,9 +34,7 @@ export class SetExaminationController {
       id,
       updateExaminationDto,
     );
-    if (!updatedExamSetup) {
-      throw new NotFoundException(`Exam setup with ID ${id} not found`);
-    }
+ 
     return updatedExamSetup;
   }
 }

@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { ResponseInterceptor } from './interceptor/response.interceptor';
+import { AllExceptionsFilter } from './filters/exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -43,7 +44,8 @@ async function bootstrap() {
 
   // Global response interceptor
   app.useGlobalInterceptors(new ResponseInterceptor());
-
+  // Apply the global exception filter
+  app.useGlobalFilters(new AllExceptionsFilter());
   // Global prefix for all routes
   app.setGlobalPrefix('/api');
   app.enableCors();
