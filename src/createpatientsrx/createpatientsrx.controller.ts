@@ -15,6 +15,10 @@ export class CreatepatientsrxController {
   async create(@Body() createPatientRxDto: any) {
     return await this.createPatientService.create(createPatientRxDto);
   }
+  @Post('/create-new')
+  async createNew(@Body() createPatientRxDto: any) {
+    return await this.createPatientService.createNew(createPatientRxDto);
+  }
 
   @Patch(':id')
   async update(

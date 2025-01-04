@@ -1,7 +1,14 @@
-import { HttpException, HttpStatus, Injectable, Param } from '@nestjs/common';
+import {
+  Body,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Param,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { pat_patients_info } from 'src/entitys/pat_patients_info';
 import { Repository } from 'typeorm';
+import { CreatePatientsDTO } from './dto/create-patient.dto';
 
 @Injectable()
 export class PatientsService {
@@ -28,6 +35,24 @@ export class PatientsService {
         .orderBy('spi.id', 'ASC')
         .getMany();
       return results;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async create(@Body() createPatientDTO: CreatePatientsDTO) {
+    try {
+      const { ...patient } = createPatientDTO;
+
+      const patientData = this.setPatientInformation.create(patient);
+      const savePatient = await this.setPatientInformation.save(patientData);
+      return savePatient;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

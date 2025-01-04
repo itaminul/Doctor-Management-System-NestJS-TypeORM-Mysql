@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  nestjs:
+    container_name: doctor-emr-api  # Custom container name
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000" # Expose NestJS port
+    environment:
+      - DB_HOST=192.168.0.106 # Database IP
+      - DB_PORT=3306
+      - DB_USER=qms_uat
+      - DB_PASSWORD=qms_uat
+      - DB_NAME=qms_uat
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+
+  mysql:
+    container_name: doctor-emr-database  # Custom container name
+    image: mysql:8.0 # Use the MySQL Docker image
+    environment:
+      MYSQL_ROOT_PASSWORD: qms_uat # Root password for MySQL
+      MYSQL_USER: qms_uat # Replace with your DB username
+      MYSQL_PASSWORD: qms_uat # Replace with your DB password
+      MYSQL_DATABASE: qms_uat # Replace with your database name
+    ports:
+      - "3306:3306" # Expose MySQL port
+    networks:
+      - app-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local

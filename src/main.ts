@@ -3,10 +3,10 @@ import { AppModule } from './app.module';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { ResponseInterceptor } from './interceptor/response.interceptor';
 import { AllExceptionsFilter } from './filters/exception.filter';
-
+import * as fs from 'fs';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+    logger: ['error', 'warn', 'log', 'debug', 'verbose']
   });
 
   // Global validation pipe with detailed error messages
@@ -49,6 +49,19 @@ async function bootstrap() {
   // Global prefix for all routes
   app.setGlobalPrefix('/api');
   app.enableCors();
-  await app.listen(4001);
+
+  // app.enableCors({
+  //   origin: 'http://163.47.146.233:4016',
+  //   credentials: true
+  // });
+
+    // Add a wildcard route for undefined URLs
+    // app.getHttpAdapter().get('*', (req, res) => {
+    //   res.status(404).json({
+    //     statusCode: 404,
+    //     message: `Route ${req.method} ${req.url} not found`,
+    //   });
+    // });
+  await app.listen(4017);
 }
 bootstrap();

@@ -13,4 +13,7 @@ export class SetInvestigationDto {
   @IsOptional()
   @IsNumber()
   slNo: number;
+  @IsOptional()
+  @IsNumber()
+  activeStatus: number;
 }

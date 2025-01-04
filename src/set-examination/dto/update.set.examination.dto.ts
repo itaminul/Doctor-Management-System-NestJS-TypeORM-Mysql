@@ -13,4 +13,7 @@ export class UpdateExaminationDto {
   @IsString()
   @IsOptional()
   description: string;
+  @IsOptional()
+  @IsNumber()
+  activeStatus: number;
 }

@@ -28,4 +28,11 @@ export class CreateMedicineDTO {
   @IsString()
   @IsOptional()
   strength: string;
+  @IsNumber()
+  @IsOptional()
+  priorityStatus: number;
+  @IsOptional()
+  @IsNumber()
+  activeStatus: number;
+  
 }
