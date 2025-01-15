@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SetExamination } from 'src/entitys/setExamination';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { SetupExaminationDto } from './dto/create.set.examination.dto';
 import { UpdateExaminationDto } from './dto/update.set.examination.dto';
 
@@ -21,10 +21,26 @@ export class SetExaminationService {
     try {
       const results = await this.setExaminationRepository.find({
         order: {
-          slNo: 'ASC'
-        }
+          slNo: 'ASC',
+        },
+        where: [
+          {
+            slNo: Not(IsNull()),
+          },
+        ],
       });
-      return results;
+
+      const nullResults = await this.setExaminationRepository.find({
+        order: {
+          slNo: 'ASC',
+        },
+        where: [
+          {
+            slNo: IsNull(),
+          },
+        ],
+      });
+      return [...results, ...nullResults];
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -68,7 +84,6 @@ export class SetExaminationService {
       }
 
       Object.assign(examSetupData, updateExaminationDto);
-
 
       return await this.setExaminationRepository.save(examSetupData);
     } catch (error) {

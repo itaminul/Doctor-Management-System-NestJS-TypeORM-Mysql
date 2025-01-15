@@ -31,6 +31,7 @@ export class Medicine {
   priorityStatus: number;
   @Column({ default: 1 })
   orgId: number;
+  @Column()
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

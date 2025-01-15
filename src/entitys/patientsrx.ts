@@ -12,6 +12,7 @@ import { RxInvestigations } from './rxinvestigations';
 import { RxAdvice } from './rxadvice';
 import { Rxcomplains } from './rxcomplains';
 import { pat_patients_info } from './pat_patients_info';
+import { RxOnExamination } from './rxonExamination';
 
 @Entity('patientsrx')
 export class Patientsrx {
@@ -23,6 +24,8 @@ export class Patientsrx {
   followUp: number;
   @Column({ nullable: true })
   rxStatus: number;
+  @Column({ nullable: true })
+  followupStates: string;
   @Column({ default: 1 })
   activeStatus: number;
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
@@ -87,5 +90,12 @@ export class Patientsrx {
   patPatientInfo: pat_patients_info;
   @Column({ nullable: true })
   patientId: number;
+
+  @OneToMany(() => RxOnExamination, (rxOnExa) => rxOnExa.patientRx, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    eager: true,
+  })
+  rxOnExamination: RxOnExamination[];
 }
 

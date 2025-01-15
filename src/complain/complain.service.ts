@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Complains } from 'src/entitys/complains';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { CreateComplainDTO } from './dto/create.complain.dto';
 
 @Injectable()
@@ -21,10 +21,23 @@ export class ComplainService {
     try {
       const results = await this.complainRepository.find({
         order: {
-          id: 'DESC',
+          slNo: 'ASC',
+        },
+        where: {
+          slNo: Not(IsNull()),
         },
       });
-      return results;
+
+      const nullResults = await this.complainRepository.find({
+        order: {
+          slNo: 'ASC',
+        },
+        where: {
+          slNo: IsNull(),
+        },
+      });
+
+      return [...results, ...nullResults];
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
