@@ -14,13 +14,15 @@ import { SetExamination } from './entitys/setExamination';
 import { Doctor } from './entitys/doctor';
 import { Users } from './entitys/users';
 import { pat_patients_info } from './entitys/pat_patients_info';
+import { RxOnExamination } from './entitys/rxonExamination';
+import { SetOnExamination } from './entitys/setOnExamination';
 
 export const AppDataSource: DataSourceOptions = {
   type: 'mysql',
   host: '192.168.0.106',
   port: 3306,
   username: 'queue_management',
-  password: 'queue_db#',
+  password: 'Management_$QE24',
   database: 'queue_management',
   entities: [
     PatPatientsInformation,
@@ -38,6 +40,9 @@ export const AppDataSource: DataSourceOptions = {
     Doctor,
     Users,
     pat_patients_info,
+    RxOnExamination,
+    SetOnExamination
+    
   ],
   // migrations: ['./src/migrations/*.ts'], // For TypeScript files
   migrations: ['./dist/migrations/*.js'],

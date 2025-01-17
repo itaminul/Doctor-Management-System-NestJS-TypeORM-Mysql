@@ -23,4 +23,9 @@ export class PatientsController {
   async getNewTwentityPendingPatients() {
     return await this.patientsService.getNewTwentityPendingPatients();
   }
+
+  @Get('/get-only-pat-by-id/:id')
+  async getOnlyPatientById(@Param('id') id: number) {
+    return await this.patientsService.getOnlyPatientById(id);
+  }
 }

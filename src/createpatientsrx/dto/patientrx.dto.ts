@@ -21,7 +21,7 @@ export class CreatePatientsRxDTO {
   id: number;
   @IsOptional()
   @IsNumber()
-  doctorId: number
+  doctorId: number;
   @IsNotEmpty()
   @IsString()
   RXDATE: string;
@@ -30,8 +30,11 @@ export class CreatePatientsRxDTO {
   @IsNumber()
   rxStatus: number;
   @IsOptional()
+  @IsString()
+  followupStates: string;
+  @IsOptional()
   @IsNumber()
-  patientId: number
+  patientId: number;
   @IsOptional() // Make optional
   @IsArray()
   @ValidateNested({ each: true })
@@ -67,5 +70,4 @@ export class CreatePatientsRxDTO {
   // @ValidateNested({ each: true})
   // @Type(() => pat_patients_info)
   // patientInfo: pat_patients_info
-  
 }

@@ -7,11 +7,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Medicine } from 'src/entitys/medicine';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { CreateMedicineDTO } from './dto/create.medicine.dto';
 import { UpdateMedicineDTO } from './dto/update.medicine.dto';
 import { Doctor } from 'src/entitys/doctor';
-
 
 @Injectable()
 export class MedicineService {
@@ -24,11 +23,31 @@ export class MedicineService {
 
   async getAll() {
     try {
-      return await this.medicineRepository.find({
+      const results = await this.medicineRepository.find({
         relations: {
           doctor: true,
         },
+        order: {
+          slNo: 'ASC',
+        },
+        where: {
+          slNo: Not(IsNull()),
+        },
       });
+
+      const nullResults = await this.medicineRepository.find({
+        relations: {
+          doctor: true,
+        },
+        order: {
+          slNo: 'ASC',
+        },
+        where: {
+          slNo: IsNull(),
+        },
+      });
+
+      return [...results, ...nullResults];
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -107,7 +126,7 @@ export class MedicineService {
         order: {
           slNo: 'ASC',
         },
-        take: 20,
+       // take: 20,
       });
     } catch (error) {
       if (error instanceof HttpException) {

@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
   Param,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -29,7 +30,7 @@ export class PatientsService {
       const results = await this.setPatientInformation
         .createQueryBuilder('spi')
         .leftJoin('patientsrx', 'pr', 'spi.id = pr.patientId')
-        .where('spi.PATIENT_STATUS = :status', { status: 0 })
+        .where('spi.PATIENT_STATUS = :status', { status: 1 })
         .andWhere('pr.patientId IS NULL')
         .select(['spi.id', 'spi.name', 'spi.SL_NO'])
         .orderBy('spi.id', 'ASC')
@@ -120,26 +121,59 @@ export class PatientsService {
       const results = await this.setPatientInformation
         .createQueryBuilder('spi')
         .leftJoin('patientsrx', 'pr', 'spi.id = pr.patientId')
-        .where('spi.PATIENT_STATUS = :status', { status: 0 })
+        .leftJoin('pat_patients_info', 'pa', 'pr.patientId = pa.id')
+        // .where('spi.PATIENT_STATUS = :status', { status: 0 })
+        .where('spi.PATIENT_STATUS = :status', { status: 1 })
+        // .andWhere('DATE(spi.ENTRY_DATE) = CURDATE()') 
         .andWhere('pr.patientId IS NULL')
-        .select(['spi.id', 'spi.name', 'spi.SL_NO'])
+        .select(['spi.id', 'spi.name', 'spi.SL_NO', 'spi.AGE', 'spi.GENDER','pa.REG_NO'])
         .orderBy('spi.id', 'ASC')
         .take(20)
         .getMany();
 
+
+
       const results1 = await this.setPatientInformation.find({
+        where: {
+          PATIENT_STATUS: 1
+          
+        },
+        select: {
+          id: true,
+          name: true,
+          SL_NO: true,
+          REG_NO: true,
+          AGE: true,
+          GENDER: true
+        },
+        order: {
+          id: 'ASC',
+        },
+        take: 20,
+      });
+      return results1;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+  async getPatientsById() {
+    try {
+      const results = await this.setPatientInformation.find({
         where: {
           PATIENT_STATUS: 0,
         },
         select: {
           id: true,
           name: true,
-          SL_NO: true,
+          AGE: true,
+          GENDER: true,
         },
-        order: {
-          id: 'ASC',
-        },
-        take: 20,
       });
       return results;
     } catch (error) {
@@ -152,4 +186,43 @@ export class PatientsService {
       );
     }
   }
+
+    async getOnlyPatientById(@Param('id') id: number) {
+
+     
+    try {
+      console.log("Id", id);
+      const ifExist = await this.setPatientInformation.findOne({
+        where: {
+          id: id,
+        },
+      });
+
+      if (!ifExist) {
+        throw new NotFoundException(`Entity with id ${id} not found`);
+      }
+
+      const data = await this.setPatientInformation.findOne({
+        where: {
+          id: id,
+        },
+        order: {
+          id: 'DESC',
+        },
+      });
+
+      return data;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+      
+  }
+
 }

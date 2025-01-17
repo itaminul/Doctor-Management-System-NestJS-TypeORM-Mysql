@@ -32,4 +32,5 @@ export class CreatepatientsrxController {
   async getPatientById(@Param('id') id: number) {
     return await this.createPatientService.getPatientById(id);
   }
+
 }

@@ -60,6 +60,8 @@ export class pat_patients_info {
 
   @Column()
   ADDRESS: string;
+  @Column()
+  REG_NO: string;  
 
   @Column({ type: 'varchar', length: 15, nullable: true })
   MOBILE_NO: string;

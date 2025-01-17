@@ -1,7 +1,13 @@
-import { Body, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Body,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Set_investigations } from 'src/entitys/set_investigations';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { SetInvestigationDto } from './dto/create.set.investigation.dto';
 
 @Injectable()
@@ -12,11 +18,25 @@ export class SetInvestigationService {
   ) {}
 
   async getAll() {
-    return await this.setInvestigationRepository.find({
+    const results = await this.setInvestigationRepository.find({
+      order: {
+        slNo: 'ASC',
+      },
+      where: {
+        slNo: Not(IsNull()),
+      },
+    });
+
+    const nullResults = await this.setInvestigationRepository.find({
       order: {
         id: 'DESC',
       },
+      where: {
+        slNo: IsNull(),
+      },
     });
+
+    return [...results, ...nullResults];
   }
 
   async create(setInvestigationDto: SetInvestigationDto) {
