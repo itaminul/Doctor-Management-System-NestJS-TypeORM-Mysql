@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Patientsrx } from './patientsrx';
+import { SetPlain } from './setPlan';
 
 @Entity()
 export class RxPlain {
@@ -17,7 +18,16 @@ doctorId: number;
   updated_by: number;
   @Column({ type: 'datetime', nullable: true })
   updated_at: Date;
+
+  
   @ManyToOne(() => Patientsrx, (patientRx) => patientRx.rxPlain)
-  patientRx: Patientsrx;
-  setPlain: any;
+  patientRx: Patientsrx[]
+
+  @ManyToOne(() => SetPlain, (setP) => setP.rxPlain, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'plainId' })
+  setPlain: SetPlain;
+
 }

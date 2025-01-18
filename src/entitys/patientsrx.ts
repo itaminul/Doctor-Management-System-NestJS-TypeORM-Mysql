@@ -14,6 +14,7 @@ import { Rxcomplains } from './rxcomplains';
 import { pat_patients_info } from './pat_patients_info';
 import { RxOnExamination } from './rxonExamination';
 import { RxPlain } from './rxPlan';
+import { RxPackage } from './rxPackages';
 
 @Entity('patientsrx')
 export class Patientsrx {
@@ -105,5 +106,12 @@ export class Patientsrx {
     eager: true,
   })
   rxPlain: RxPlain[];
+
+  @OneToMany(() => RxPackage, (rxPackage) => rxPackage.patientRx, {
+    nullable: true,
+    onDelete: 'CASCADE',
+    eager: true,
+  })
+  rxPackage: RxPackage[];
 }
 

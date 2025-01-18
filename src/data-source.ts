@@ -17,6 +17,9 @@ import { pat_patients_info } from './entitys/pat_patients_info';
 import { RxOnExamination } from './entitys/rxonExamination';
 import { SetOnExamination } from './entitys/setOnExamination';
 import { RxPlain } from './entitys/rxPlan';
+import { RxPackage } from './entitys/rxPackages';
+import { SetPlain } from './entitys/setPlan';
+import { SetPackage } from './entitys/setPackage';
 
 export const AppDataSource: DataSourceOptions = {
   type: 'mysql',
@@ -43,8 +46,10 @@ export const AppDataSource: DataSourceOptions = {
     pat_patients_info,
     RxOnExamination,
     SetOnExamination,
-    RxPlain
-    
+    RxPlain,
+    RxPackage,
+    SetPlain,
+    SetPackage,
   ],
   // migrations: ['./src/migrations/*.ts'], // For TypeScript files
   migrations: ['./dist/migrations/*.js'],

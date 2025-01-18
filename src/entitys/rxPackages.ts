@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Patientsrx } from './patientsrx';
 
 @Entity()
-export class RxOnExamination {
+export class RxPackage {
   @PrimaryGeneratedColumn()
   id: number;
   @Column({ default: 1 })
@@ -17,6 +17,7 @@ doctorId: number;
   updated_by: number;
   @Column({ type: 'datetime', nullable: true })
   updated_at: Date;
-  @ManyToOne(() => Patientsrx, (patientRx) => patientRx.rxOnExamination)
+  @ManyToOne(() => Patientsrx, (patientRx) => patientRx.rxPackage)
   patientRx: Patientsrx;
+  setPackage: any;
 }
