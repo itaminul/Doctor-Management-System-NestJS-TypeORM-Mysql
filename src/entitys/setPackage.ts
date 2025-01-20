@@ -6,9 +6,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { RxAdvice } from './rxadvice';
+import { RxPackage } from './rxPackages';
 
-@Entity('setOnexamination')
-export class SetAdvice {
+@Entity('setPackage')
+export class SetPackage {
   @PrimaryGeneratedColumn()
   id: number;
   @Column()
@@ -28,10 +29,10 @@ export class SetAdvice {
   @Column({ type: 'datetime', nullable: true })
   updated_at: Date;
 
-  @OneToMany(() => RxAdvice, (rxAdvice) => rxAdvice.setAdvice, {
+  @OneToMany(() => RxPackage, (rxPac) => rxPac.setPackage, {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'adviceId' })
-  rxAdvice: RxAdvice[];
+  @JoinColumn({ name: 'packageId' })
+  rxAdvice: RxPackage[];
 }
