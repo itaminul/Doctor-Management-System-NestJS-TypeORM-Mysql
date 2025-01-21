@@ -21,7 +21,8 @@ doctorId: number;
 
   
   @ManyToOne(() => Patientsrx, (patientRx) => patientRx.rxPlain)
-  patientRx: Patientsrx[]
+  @JoinColumn({ name: 'patientsrxid' })
+  patientRx: Patientsrx
 
   @ManyToOne(() => SetPlain, (setP) => setP.rxPlain, {
     nullable: true,
