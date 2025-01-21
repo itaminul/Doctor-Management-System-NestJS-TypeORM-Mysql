@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Patientsrx } from './patientsrx';
+import { SetPackage } from './setPackage';
 
 @Entity()
 export class RxPackage {
@@ -18,6 +19,14 @@ doctorId: number;
   @Column({ type: 'datetime', nullable: true })
   updated_at: Date;
   @ManyToOne(() => Patientsrx, (patientRx) => patientRx.rxPackage)
+  @JoinColumn({ name: 'patientsrxid' })
   patientRx: Patientsrx;
-  setPackage: any;
+
+  @ManyToOne(() => SetPackage, (setOnExa) => setOnExa.rxPackage, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'onRxPackageId' })
+  setPackage: SetPackage[];
+  rxPackage: any;
 }

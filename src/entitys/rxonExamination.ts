@@ -25,6 +25,7 @@ export class RxOnExamination {
   @Column({ type: 'datetime', nullable: true })
   updated_at: Date;
   @ManyToOne(() => Patientsrx, (patientRx) => patientRx.rxOnExamination)
+  @JoinColumn({ name: 'patientsrxid' })
   patientRx: Patientsrx;
   @ManyToOne(() => SetOnExamination, (setOnExa) => setOnExa.rxOnExaminations, {
     nullable: true,

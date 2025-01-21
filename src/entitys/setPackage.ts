@@ -29,10 +29,10 @@ export class SetPackage {
   @Column({ type: 'datetime', nullable: true })
   updated_at: Date;
 
-  @OneToMany(() => RxPackage, (rxPac) => rxPac.setPackage, {
+  @OneToMany(() => RxPackage, (rxPac) => rxPac.rxPackage, {
     nullable: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'packageId' })
-  rxAdvice: RxPackage[];
+  rxPackage: RxPackage[];
 }

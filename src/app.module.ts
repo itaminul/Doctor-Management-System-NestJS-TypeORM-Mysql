@@ -13,6 +13,8 @@ import { SetExaminationModule } from './set-examination/set-examination.module';
 import { DoctorModule } from './doctor/doctor.module';
 import { UsersModule } from './users/users.module';
 import { PatientsModule } from './patients/patients.module';
+import { SetPlainModule } from './set-plain/set-plain.module';
+import { SetPackagesModule } from './set-packages/set-packages.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { PatientsModule } from './patients/patients.module';
     DoctorModule,
     UsersModule,
     PatientsModule,
+    SetPlainModule,
+    SetPackagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
