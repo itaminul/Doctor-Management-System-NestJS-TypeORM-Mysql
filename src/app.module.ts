@@ -15,6 +15,7 @@ import { UsersModule } from './users/users.module';
 import { PatientsModule } from './patients/patients.module';
 import { SetPlainModule } from './set-plain/set-plain.module';
 import { SetPackagesModule } from './set-packages/set-packages.module';
+import { SetOnExaminationModule } from './set-on-examination/set-on-examination.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SetPackagesModule } from './set-packages/set-packages.module';
     PatientsModule,
     SetPlainModule,
     SetPackagesModule,
+    SetOnExaminationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
