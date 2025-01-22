@@ -14,6 +14,10 @@ import { Complains } from 'src/entitys/complains';
 import { SetAdvice } from 'src/entitys/setAdvice';
 import { SetExamination } from 'src/entitys/setExamination';
 import { pat_patients_info } from 'src/entitys/pat_patients_info';
+import { SetPlain } from 'src/entitys/setPlan';
+import { RxPlain } from 'src/entitys/rxPlan';
+import { RxOnExamination } from 'src/entitys/rxonExamination';
+import { SetOnExamination } from 'src/entitys/setOnExamination';
 
 @Module({
   imports: [
@@ -29,7 +33,12 @@ import { pat_patients_info } from 'src/entitys/pat_patients_info';
       Complains,
       SetAdvice,
       SetExamination,
-      pat_patients_info
+      pat_patients_info,
+      SetPlain,
+      RxPlain,
+      SetExamination,
+      RxOnExamination,
+      SetOnExamination
     ]),
   ],
   providers: [CreatepatientsrxService],

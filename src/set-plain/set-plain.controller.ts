@@ -8,7 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { SetPlainService } from './set-plain.service';
-import { SetPlainDto } from './dto/create.set.investigation.dto';
+import { SetPlainDto } from './dto/create.set.plain.dto';
 
 @Controller('set-plain')
 export class SetPlainController {

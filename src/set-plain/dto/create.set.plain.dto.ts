@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-export class SetOnExaminationDto {
+export class SetPlainDto {
   @IsOptional()
   @IsNumber()
   id?: number;
@@ -14,7 +14,7 @@ export class SetOnExaminationDto {
   slNo: number;
   @IsOptional()
   @IsNumber()
-  onExaminationId: number;
+  plainId: number;
   @IsOptional()
   @IsNumber()
   activeStatus: number;

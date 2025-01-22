@@ -32,5 +32,5 @@ export class RxOnExamination {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'onExaminationId' })
-  setOnExaminations: SetOnExamination[];
+  setOnExaminations: SetOnExamination;
 }
