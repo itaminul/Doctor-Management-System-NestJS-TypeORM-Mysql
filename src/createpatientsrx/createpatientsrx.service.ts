@@ -60,7 +60,7 @@ export class CreatepatientsrxService {
     public readonly rxPlainRepository: Repository<RxPlain>,
     @InjectRepository(SetOnExamination)
     public readonly setOnExamination: Repository<SetOnExamination>,
-    @InjectRepository(SetOnExamination)
+    @InjectRepository(RxOnExamination)
     public readonly rxOnExaminationRepository: Repository<RxOnExamination>,
   ) {}
 
@@ -452,34 +452,34 @@ export class CreatepatientsrxService {
 
       //rxOnExamination
       if (rxOnExamination && rxOnExamination.length > 0) {
-        for (const rxOnExaminationDto of rxPlain) {
+        for (const rxOnExaminationDto of rxOnExamination) {
           let setOnExam: any;
-          if (rxOnExaminationDto.plainId) {
-            if (setOnExaminationMap.has(rxOnExaminationDto.plainId)) {
-              setOnExam = setOnExaminationMap.has(rxOnExaminationDto.plainId);
+          if (rxOnExaminationDto.onExaminationId) {
+            if (setOnExaminationMap.has(rxOnExaminationDto.onExaminationId)) {
+              setOnExam = setOnExaminationMap.has(rxOnExaminationDto.onExaminationId);
             } else {
-              setOnExam = await this.rxOnExaminationRepository.findOne({
-                where: { id: rxOnExaminationDto.plainId },
+              setOnExam = await this.setOnExamination.findOne({
+                where: { id: rxOnExaminationDto.onExaminationId },
               });
             }
 
             if (!setOnExaminationMap) {
-              throw new Error(`Advice ${rxOnExaminationDto.plainId} not found`);
+              throw new Error(`Advice ${rxOnExaminationDto.onExaminationId} not found`);
             }
-            setOnExaminationMap.set(rxOnExaminationDto.plainId, setOnExam);
+            setOnExaminationMap.set(rxOnExaminationDto.onExaminationId, setOnExam);
           } else {
             setOnExam =
               this.rxOnExaminationRepository.create(rxOnExaminationDto);
-            setOnExam = await this.setPlainRepository.save(setOnExam);
+            setOnExam = await this.rxOnExaminationRepository.save(setOnExam);
             setOnExaminationMap.set(setOnExam.id, setOnExam);
           }
 
-          const plain = this.rxOnExaminationRepository.create({
+          const OnExam = this.rxOnExaminationRepository.create({
             ...rxOnExaminationDto,
             patientRx: savePatientRx,
             setOnExaminations: setOnExam,
           });
-          await this.rxOnExaminationRepository.save(plain);
+          await this.rxOnExaminationRepository.save(OnExam);
         }
       }
 
