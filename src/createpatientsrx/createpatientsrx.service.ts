@@ -22,6 +22,10 @@ import { Complains } from 'src/entitys/complains';
 import { SetAdvice } from 'src/entitys/setAdvice';
 import { SetExamination } from 'src/entitys/setExamination';
 import { pat_patients_info } from 'src/entitys/pat_patients_info';
+import { SetPlain } from 'src/entitys/setPlan';
+import { RxPlain } from 'src/entitys/rxPlan';
+import { SetOnExamination } from 'src/entitys/setOnExamination';
+import { RxOnExamination } from 'src/entitys/rxonExamination';
 
 @Injectable()
 export class CreatepatientsrxService {
@@ -50,6 +54,14 @@ export class CreatepatientsrxService {
     public readonly setExaminationRepository: Repository<SetExamination>,
     @InjectRepository(pat_patients_info)
     public readonly patientSetupRepository: Repository<pat_patients_info>,
+    @InjectRepository(SetPlain)
+    public readonly setPlainRepository: Repository<SetPlain>,
+    @InjectRepository(RxPlain)
+    public readonly rxPlainRepository: Repository<RxPlain>,
+    @InjectRepository(SetOnExamination)
+    public readonly setOnExamination: Repository<SetOnExamination>,
+    @InjectRepository(SetOnExamination)
+    public readonly rxOnExaminationRepository: Repository<RxOnExamination>,
   ) {}
 
   async getAll() {
@@ -117,13 +129,16 @@ export class CreatepatientsrxService {
           rxAdvice: {
             setAdvice: true,
           },
+          rxPlain: {
+            setPlain: true,
+          },
         },
         order: {
           id: 'DESC',
         },
       });
 
-     /* const formattedData = data.map((patientdata) => ({
+      /* const formattedData = data.map((patientdata) => ({
         patientId: patientdata.patPatientInfo.id,
         patientsName: patientdata.patPatientInfo.name,
         patientDoctorId: patientdata.patPatientInfo.id,
@@ -191,6 +206,8 @@ export class CreatepatientsrxService {
         rxInvestigations,
         rxadvice,
         rxComplains,
+        rxPlain,
+        rxOnExamination,
         ...patientData
       } = createPatientDto;
       console.log('save data in prescription', createPatientDto);
@@ -201,6 +218,8 @@ export class CreatepatientsrxService {
       const complainMap = new Map<number, Complains>();
       const setAdviceMap = new Map<number, SetAdvice>();
       const setExaminationMap = new Map<number, SetExamination>();
+      const setPlainMap = new Map<number, SetPlain>();
+      const setOnExaminationMap = new Map<number, SetOnExamination>();
 
       /*
         const statuUpdate =  this.patientSetupRepository.save({
@@ -399,6 +418,71 @@ export class CreatepatientsrxService {
         }
       }
 
+      //rxPlain
+      if (rxPlain && rxPlain.length > 0) {
+        for (const rxPlainDto of rxPlain) {
+          let setPlain: any;
+          if (rxPlainDto.plainId) {
+            if (setPlainMap.has(rxPlainDto.plainId)) {
+              setPlain = setPlainMap.has(rxPlainDto.plainId);
+            } else {
+              setPlain = await this.setPlainRepository.findOne({
+                where: { id: rxPlainDto.plainId },
+              });
+            }
+
+            if (!setPlainMap) {
+              throw new Error(`Advice ${rxPlainDto.plainId} not found`);
+            }
+            setPlainMap.set(rxPlainDto.plainId, setPlain);
+          } else {
+            setPlain = this.rxPlainRepository.create(rxPlainDto);
+            setPlain = await this.setPlainRepository.save(setPlain);
+            setPlainMap.set(setPlain.id, setPlain);
+          }
+
+          const plain = this.rxPlainRepository.create({
+            ...rxPlainDto,
+            patientRx: savePatientRx,
+            setPlain: setPlain,
+          });
+          await this.rxPlainRepository.save(plain);
+        }
+      }
+
+      //rxOnExamination
+      if (rxOnExamination && rxOnExamination.length > 0) {
+        for (const rxOnExaminationDto of rxPlain) {
+          let setOnExam: any;
+          if (rxOnExaminationDto.plainId) {
+            if (setOnExaminationMap.has(rxOnExaminationDto.plainId)) {
+              setOnExam = setOnExaminationMap.has(rxOnExaminationDto.plainId);
+            } else {
+              setOnExam = await this.rxOnExaminationRepository.findOne({
+                where: { id: rxOnExaminationDto.plainId },
+              });
+            }
+
+            if (!setOnExaminationMap) {
+              throw new Error(`Advice ${rxOnExaminationDto.plainId} not found`);
+            }
+            setOnExaminationMap.set(rxOnExaminationDto.plainId, setOnExam);
+          } else {
+            setOnExam =
+              this.rxOnExaminationRepository.create(rxOnExaminationDto);
+            setOnExam = await this.setPlainRepository.save(setOnExam);
+            setOnExaminationMap.set(setOnExam.id, setOnExam);
+          }
+
+          const plain = this.rxOnExaminationRepository.create({
+            ...rxOnExaminationDto,
+            patientRx: savePatientRx,
+            setOnExaminations: setOnExam,
+          });
+          await this.rxOnExaminationRepository.save(plain);
+        }
+      }
+
       return savePatientRx;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -419,6 +503,7 @@ export class CreatepatientsrxService {
         rxInvestigations,
         rxadvice,
         rxComplains,
+        rxPlain,
         ...patientData
       } = createPatientDto;
       console.log('save data in prescription', createPatientDto);
@@ -1096,7 +1181,7 @@ export class CreatepatientsrxService {
 
   async getPatientById(@Param('id') id: number) {
     try {
-      console.log("Id", id);
+      console.log('Id', id);
       const ifExist = await this.patientRxRepository.findOne({
         where: {
           id: id,
@@ -1136,7 +1221,7 @@ export class CreatepatientsrxService {
         },
       });
 
-    //https://erp.atilimited.net/api/api-leave-email
+      //https://erp.atilimited.net/api/api-leave-email
       // const formattedData = ({
       //   patientId: data.patPatientInfo.id,
       //   patientsName: data.patPatientInfo.name,
@@ -1198,7 +1283,4 @@ export class CreatepatientsrxService {
       );
     }
   }
-
-
 }
-

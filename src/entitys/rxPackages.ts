@@ -27,6 +27,5 @@ doctorId: number;
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'onRxPackageId' })
-  setPackage: SetPackage[];
-  rxPackage: any;
+  rxPackage: SetPackage;
 }

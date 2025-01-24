@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { SetPlain } from 'src/entitys/setPlan';
 import { IsNull, Not, Repository } from 'typeorm';
-import { SetPlainDto } from './dto/create.set.investigation.dto';
+import { SetPlainDto } from './dto/create.set.plain.dto';
 
 @Injectable()
 export class SetPlainService {

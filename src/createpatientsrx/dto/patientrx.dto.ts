@@ -11,9 +11,9 @@ import { CreateRxExaminationDTO } from './rxexamination.dto';
 import { CreateRxMedicineDTO } from './rxmedicine.dto';
 import { CreateRxInvestigationDTO } from './rxinvestigation.dto';
 import { CreateRxAdviceDTO } from './rxadvice.dto';
-import { CreateRxComplainsDTO } from './rxcomplains.dto';
 import { CreateComplainDTO } from 'src/complain/dto/create.complain.dto';
-import { pat_patients_info } from 'src/entitys/pat_patients_info';
+import { SetPlainDto } from 'src/set-plain/dto/create.set.plain.dto';
+import { SetOnExaminationDto } from 'src/set-on-examination/dto/create.set.on-examination.dto';
 
 export class CreatePatientsRxDTO {
   @IsOptional()
@@ -64,6 +64,18 @@ export class CreatePatientsRxDTO {
   @ValidateNested({ each: true })
   @Type(() => CreateComplainDTO)
   rxComplains?: CreateComplainDTO[];
+
+  @IsOptional() // Make optional
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SetPlainDto)
+  rxPlain?: SetPlainDto[];
+
+  @IsOptional() // Make optional
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SetOnExaminationDto)
+  rxOnExamination?: SetOnExaminationDto[];
 
   // @IsOptional()
   // @IsArray()
