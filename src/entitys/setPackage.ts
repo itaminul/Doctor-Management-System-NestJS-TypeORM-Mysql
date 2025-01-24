@@ -29,7 +29,7 @@ export class SetPackage {
   @Column({ type: 'datetime', nullable: true })
   updated_at: Date;
 
-  @OneToMany(() => RxPackage, (rxPac) => rxPac.rxPackage, {
+  @OneToMany(() => RxPackage, (rxPac) => rxPac.setPackage, {
     nullable: true,
     onDelete: 'CASCADE',
   })

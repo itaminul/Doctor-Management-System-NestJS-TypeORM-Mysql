@@ -26,6 +26,8 @@ import { SetPlain } from 'src/entitys/setPlan';
 import { RxPlain } from 'src/entitys/rxPlan';
 import { SetOnExamination } from 'src/entitys/setOnExamination';
 import { RxOnExamination } from 'src/entitys/rxonExamination';
+import { SetPackage } from 'src/entitys/setPackage';
+import { RxPackage } from 'src/entitys/rxPackages';
 
 @Injectable()
 export class CreatepatientsrxService {
@@ -62,6 +64,10 @@ export class CreatepatientsrxService {
     public readonly setOnExamination: Repository<SetOnExamination>,
     @InjectRepository(RxOnExamination)
     public readonly rxOnExaminationRepository: Repository<RxOnExamination>,
+    @InjectRepository(SetPackage)
+    public readonly setPackageRepository: Repository<SetPackage>,
+    @InjectRepository(RxPackage)
+    public readonly rxPackageRepository: Repository<RxPackage>
   ) {}
 
   async getAll() {
@@ -208,6 +214,7 @@ export class CreatepatientsrxService {
         rxComplains,
         rxPlain,
         rxOnExamination,
+        rxPackage,
         ...patientData
       } = createPatientDto;
       console.log('save data in prescription', createPatientDto);
@@ -220,6 +227,7 @@ export class CreatepatientsrxService {
       const setExaminationMap = new Map<number, SetExamination>();
       const setPlainMap = new Map<number, SetPlain>();
       const setOnExaminationMap = new Map<number, SetOnExamination>();
+      const setPackageMap = new Map<number, SetPackage>();
 
       /*
         const statuUpdate =  this.patientSetupRepository.save({
@@ -482,6 +490,44 @@ export class CreatepatientsrxService {
           await this.rxOnExaminationRepository.save(OnExam);
         }
       }
+
+            //rxPackages
+            if (rxPackage && rxPackage.length > 0) {
+              console.log("rxPackage", rxPackage);
+              for (const rxPackageDto of rxPackage) {
+                let setPackage: any;
+                console.log("rxPackageDto", rxPackageDto);
+                if (rxPackageDto.packageId) {
+                  if (setPackageMap.has(rxPackageDto.packageId)) {
+                    setPackage = setPackageMap.has(rxPackageDto.packageId);
+                  } else {
+                    setPackage = await this.setPackageRepository.findOne({
+                      where: { id: rxPackageDto.packageId },
+                    });
+                  }
+      
+                  if (!setPackageMap) {
+                    throw new Error(`Advice ${rxPackageDto.packageId} not found`);
+                  }
+
+                  setPackageMap.set(rxPackageDto.packageId, setPackage);
+
+                } else {
+
+                  setPackage =
+                    this.rxPackageRepository.create(rxPackageDto);
+                    setPackage = await this.rxPackageRepository.save(setPackage);
+                    setPackageMap.set(setPackage.id, setPackage);
+                }
+      
+                const rxPack = this.rxPackageRepository.create({
+                  ...rxPackageDto,
+                  patientRx: savePatientRx,
+                  setPackage: setPackage,
+                });
+                await this.rxPackageRepository.save(rxPack);
+              }
+            }
 
       return savePatientRx;
     } catch (error) {

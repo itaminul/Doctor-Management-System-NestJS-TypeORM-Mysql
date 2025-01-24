@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 't
 import { Patientsrx } from './patientsrx';
 import { SetPackage } from './setPackage';
 
-@Entity()
+@Entity('rxPackage')
 export class RxPackage {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,10 +22,10 @@ doctorId: number;
   @JoinColumn({ name: 'patientsrxid' })
   patientRx: Patientsrx;
 
-  @ManyToOne(() => SetPackage, (setOnExa) => setOnExa.rxPackage, {
+  @ManyToOne(() => SetPackage, (setPac) => setPac.rxPackage, {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'onRxPackageId' })
-  rxPackage: SetPackage;
+  @JoinColumn({ name: 'rxPackageId' })
+  setPackage: SetPackage;
 }
