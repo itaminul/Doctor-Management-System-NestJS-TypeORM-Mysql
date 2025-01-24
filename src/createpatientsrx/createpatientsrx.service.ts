@@ -144,54 +144,51 @@ export class CreatepatientsrxService {
         },
       });
 
-      /* const formattedData = data.map((patientdata) => ({
-        patientId: patientdata.patPatientInfo.id,
-        patientsName: patientdata.patPatientInfo.name,
-        patientDoctorId: patientdata.patPatientInfo.id,
-        // doctorId: patientdata.patPatientInfo.doctor.id,
-        // doctorName: patientdata.patPatientInfo.doctor.name,
-        rxDate: patientdata.RXDATE,
-        followUp: patientdata.followUp,
-        medicines: patientdata.rxmedicine.map((medicine) => ({
-          patientId: patientdata.patPatientInfo.id,
-          rxmedicineId: medicine.id,
-          medicineId: medicine.medicine.id,
-          medicineName: medicine.medicine.medicineName,
-          numberOfTimes: medicine.numberOfTimes,
-          morning: medicine.morning,
-          lunch: medicine.lunch,
-          evening: medicine.evening,
-          night: medicine.night,
+      const formattedData = data.map((patientdata) => ({
+        patientId: patientdata.patPatientInfo?.id || null,
+        patientsName: patientdata.patPatientInfo?.name || 'Unknown',
+        patientDoctorId: patientdata.patPatientInfo?.id || null,
+        rxDate: patientdata.RXDATE || null,
+        followUp: patientdata.followUp || null,
+        medicines: (patientdata.rxmedicine || []).map((medicine) => ({
+          patientId: patientdata.patPatientInfo?.id || null,
+          rxmedicineId: medicine?.id || null,
+          medicineId: medicine?.medicine?.id || null,
+          medicineName: medicine?.medicine?.medicineName || 'Unknown',
+          numberOfTimes: medicine?.numberOfTimes || 0,
+          morning: medicine?.morning || 0,
+          lunch: medicine?.lunch || 0,
+          evening: medicine?.evening || 0,
+          night: medicine?.night || 0,
         })),
-        investigations: patientdata.rxInvestigations.map((investigation) => ({
-          patientId: patientdata.patPatientInfo.id,
-          rxInvestigationId: investigation.id,
-          setInvestigationId: investigation.setInvestigations.id,
-          investigationName: investigation.setInvestigations.name,
+        investigations: (patientdata.rxInvestigations || []).map((investigation) => ({
+          patientId: patientdata.patPatientInfo?.id || null,
+          rxInvestigationId: investigation?.id || null,
+          setInvestigationId: investigation?.setInvestigations?.id || null,
+          investigationName: investigation?.setInvestigations?.name || 'Unknown',
         })),
-
-        examinations: patientdata.rxexaminations.map((examination) => ({
-          patientId: patientdata.patPatientInfo.id,
-          rxExaminationId: examination.id,
-          setExaminationId: examination.setExamination.id,
-          examinationName: examination.setExamination.name,
+        examinations: (patientdata.rxexaminations || []).map((examination) => ({
+          patientId: patientdata.patPatientInfo?.id || null,
+          rxExaminationId: examination?.id || null,
+          setExaminationId: examination?.setExamination?.id || null,
+          examinationName: examination?.setExamination?.name || 'Unknown',
         })),
-
-        comlains: patientdata.rxComplains.map((complain) => ({
-          patientId: patientdata.patPatientInfo.id,
-          rxComplianId: complain.id,
-          setComplainId: complain.complains.id,
-          complainName: complain.complains.name,
+        comlains: (patientdata.rxComplains || []).map((complain) => ({
+          patientId: patientdata.patPatientInfo?.id || null,
+          rxComplianId: complain?.id || null,
+          setComplainId: complain?.complains?.id || null,
+          complainName: complain?.complains?.name || 'Unknown',
         })),
-        advices: patientdata.rxAdvice.map((advice) => ({
-          patientId: patientdata.patPatientInfo.id,
-          rxAdviceId: advice.id,
-          setAdviceId: advice.setAdvice.id,
-          adviceName: advice.setAdvice.name,
+        advices: (patientdata.rxAdvice || []).map((advice) => ({
+          patientId: patientdata.patPatientInfo?.id || null,
+          rxAdviceId: advice?.id || null,
+          setAdviceId: advice?.setAdvice?.id || null,
+          adviceName: advice?.setAdvice?.name || 'Unknown',
         })),
       }));
-*/
-      return data;
+      
+
+      return formattedData;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
