@@ -1,14 +1,27 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CreatepatientsrxService } from './createpatientsrx.service';
-import { CreatePatientsRxDTO } from './dto/patientrx.dto';
 import { UpdatePatientsRxDTO } from './dto/updatePatientrx.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('createpatientsrx')
 export class CreatepatientsrxController {
   constructor(public readonly createPatientService: CreatepatientsrxService) {}
+  @UseInterceptors(CacheInterceptor)
   @Get()
-  async getAll() {
-    return await this.createPatientService.getAll();
+  async getAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return await this.createPatientService.getAll(page, limit);
   }
 
   @Post()
@@ -33,4 +46,12 @@ export class CreatepatientsrxController {
     return await this.createPatientService.getPatientById(id);
   }
 
+  @UseInterceptors(CacheInterceptor)
+  @Get('/get-patient-data/')
+  async get(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return await this.createPatientService.getAllPaginateData(page, limit);
+  }
 }

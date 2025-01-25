@@ -16,9 +16,11 @@ import { PatientsModule } from './patients/patients.module';
 import { SetPlainModule } from './set-plain/set-plain.module';
 import { SetPackagesModule } from './set-packages/set-packages.module';
 import { SetOnExaminationModule } from './set-on-examination/set-on-examination.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    CacheModule.register(),
     TypeOrmModule.forRoot(AppDataSource),
     CreatepatientsrxModule,
     MedicineModule,
