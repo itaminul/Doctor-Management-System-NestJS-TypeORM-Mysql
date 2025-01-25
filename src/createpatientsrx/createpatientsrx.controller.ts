@@ -47,11 +47,8 @@ export class CreatepatientsrxController {
   }
 
   @UseInterceptors(CacheInterceptor)
-  @Get('/get-patient-data/')
-  async get(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-  ) {
-    return await this.createPatientService.getAllPaginateData(page, limit);
+  @Get('/get-patient-data')
+  async get(@Query('fromDate') fromDate: string, @Query('toDate') toDate: string) {
+    return await this.createPatientService.getAllPaginateData(fromDate, toDate);
   }
 }

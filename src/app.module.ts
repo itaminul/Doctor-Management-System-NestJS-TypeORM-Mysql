@@ -17,6 +17,7 @@ import { SetPlainModule } from './set-plain/set-plain.module';
 import { SetPackagesModule } from './set-packages/set-packages.module';
 import { SetOnExaminationModule } from './set-on-examination/set-on-examination.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { AddPatientModule } from './add-patient/add-patient.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     SetPlainModule,
     SetPackagesModule,
     SetOnExaminationModule,
+    AddPatientModule,
   ],
   controllers: [AppController],
   providers: [AppService],
