@@ -38,9 +38,9 @@ export class SetOnExaminationService {
     return [...results, ...nullResults];
   }
 
-  async create(setPacDto: SetOnExaminationDto) {
-    const { ...setPlainDto } = setPacDto;
-    const getData = this.setOnExaminationRepository.create(setPlainDto);
+  async create(setOnEDto: SetOnExaminationDto) {
+    const { ...setExDto } = setOnEDto;
+    const getData = this.setOnExaminationRepository.create(setExDto);
     const saveData = await this.setOnExaminationRepository.save(getData);
     return saveData;
   }
