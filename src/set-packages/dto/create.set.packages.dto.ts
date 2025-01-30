@@ -3,6 +3,9 @@ export class SetPackagesDto {
   @IsOptional()
   @IsNumber()
   id?: number;
+  @IsOptional()
+  @IsNumber()
+  packageId?: number;
   @IsString()
   @IsNotEmpty()
   name: string;

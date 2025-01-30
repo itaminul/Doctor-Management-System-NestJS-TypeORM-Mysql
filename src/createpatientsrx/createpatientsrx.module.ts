@@ -18,6 +18,8 @@ import { SetPlain } from 'src/entitys/setPlan';
 import { RxPlain } from 'src/entitys/rxPlan';
 import { RxOnExamination } from 'src/entitys/rxonExamination';
 import { SetOnExamination } from 'src/entitys/setOnExamination';
+import { SetPackage } from 'src/entitys/setPackage';
+import { RxPackage } from 'src/entitys/rxPackages';
 
 @Module({
   imports: [
@@ -38,7 +40,9 @@ import { SetOnExamination } from 'src/entitys/setOnExamination';
       RxPlain,
       SetExamination,
       RxOnExamination,
-      SetOnExamination
+      SetOnExamination,
+      SetPackage,
+      RxPackage
     ]),
   ],
   providers: [CreatepatientsrxService],
