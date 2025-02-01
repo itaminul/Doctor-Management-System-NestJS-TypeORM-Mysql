@@ -20,9 +20,11 @@ import { RxOnExamination } from 'src/entitys/rxonExamination';
 import { SetOnExamination } from 'src/entitys/setOnExamination';
 import { SetPackage } from 'src/entitys/setPackage';
 import { RxPackage } from 'src/entitys/rxPackages';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    CacheModule.register(),
     TypeOrmModule.forFeature([
       Patientsrx,
       Rxmedicine,

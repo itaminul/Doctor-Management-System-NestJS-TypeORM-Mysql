@@ -67,10 +67,10 @@ export class CreatepatientsrxService {
     @InjectRepository(SetPackage)
     public readonly setPackageRepository: Repository<SetPackage>,
     @InjectRepository(RxPackage)
-    public readonly rxPackageRepository: Repository<RxPackage>
+    public readonly rxPackageRepository: Repository<RxPackage>,
   ) {}
 
-  async getAll() {
+  async getAllBack() {
     try {
       /* const data1 = await this.patientRxRepository
       .createQueryBuilder('patientsrx')
@@ -144,6 +144,182 @@ export class CreatepatientsrxService {
         },
       });
 
+      /* const formattedData = data.map((patientdata) => ({
+        patientId: patientdata.patPatientInfo.id,
+        patientsName: patientdata.patPatientInfo.name,
+        patientDoctorId: patientdata.patPatientInfo.id,
+        // doctorId: patientdata.patPatientInfo.doctor.id,
+        // doctorName: patientdata.patPatientInfo.doctor.name,
+        rxDate: patientdata.RXDATE,
+        followUp: patientdata.followUp,
+        medicines: patientdata.rxmedicine.map((medicine) => ({
+          patientId: patientdata.patPatientInfo.id,
+          rxmedicineId: medicine.id,
+          medicineId: medicine.medicine.id,
+          medicineName: medicine.medicine.medicineName,
+          numberOfTimes: medicine.numberOfTimes,
+          morning: medicine.morning,
+          lunch: medicine.lunch,
+          evening: medicine.evening,
+          night: medicine.night,
+        })),
+        investigations: patientdata.rxInvestigations.map((investigation) => ({
+          patientId: patientdata.patPatientInfo.id,
+          rxInvestigationId: investigation.id,
+          setInvestigationId: investigation.setInvestigations.id,
+          investigationName: investigation.setInvestigations.name,
+        })),
+
+        examinations: patientdata.rxexaminations.map((examination) => ({
+          patientId: patientdata.patPatientInfo.id,
+          rxExaminationId: examination.id,
+          setExaminationId: examination.setExamination.id,
+          examinationName: examination.setExamination.name,
+        })),
+
+        comlains: patientdata.rxComplains.map((complain) => ({
+          patientId: patientdata.patPatientInfo.id,
+          rxComplianId: complain.id,
+          setComplainId: complain.complains.id,
+          complainName: complain.complains.name,
+        })),
+        advices: patientdata.rxAdvice.map((advice) => ({
+          patientId: patientdata.patPatientInfo.id,
+          rxAdviceId: advice.id,
+          setAdviceId: advice.setAdvice.id,
+          adviceName: advice.setAdvice.name,
+        })),
+      }));
+*/
+      return data;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getAll(page = 1, limit = 10) {
+    try {
+      /* const data1 = await this.patientRxRepository
+      .createQueryBuilder('patientsrx')
+      .leftJoinAndSelect('patientsrx.patPatientInfo', 'patPatientInfo') 
+      .addSelect(['patPatientInfo.id']) // Replace with valid columns
+      .leftJoinAndSelect('patientsrx.rxmedicine', 'rxmedicine')
+      .leftJoinAndSelect('rxmedicine.medicine', 'medicine')
+      .leftJoinAndSelect('patientsrx.rxInvestigations', 'rxInvestigations')
+      .leftJoinAndSelect('rxInvestigations.setInvestigations', 'setInvestigations')
+      .leftJoinAndSelect('patientsrx.rxexaminations', 'rxexaminations')
+      .leftJoinAndSelect('rxexaminations.setExamination', 'setExamination')
+      .leftJoinAndSelect('patientsrx.rxComplains', 'rxComplains')
+      .leftJoinAndSelect('rxComplains.complains', 'complains')
+      .leftJoinAndSelect('patientsrx.rxAdvice', 'rxAdvice')
+      .leftJoinAndSelect('rxAdvice.setAdvice', 'setAdvice')
+      .addSelect([      
+        'setAdvice.name' 
+      ])
+      .orderBy('patientsrx.id', 'DESC')
+      .getMany();
+
+      
+      const data2 = await this.patientRxRepository
+      .createQueryBuilder('patientsrx')
+      .select([
+        'patientsrx.id', 
+        'patientsrx.RXDATE', 
+        'patientsrx.followUp', 
+        'patientsrx.rxStatus', 
+        'patientsrx.activeStatus',
+        'patPatientInfo.name', 
+        'complains.name complainName'
+      ])
+      .leftJoin('pat_patients_info', 'patPatientInfo', 'patientsrx.patientId = patPatientInfo.id')
+      .leftJoin('rxmedicine', 'rxmedicine', 'patientsrx.id = rxmedicine.patientsrxId')
+      .leftJoin('rxInvestigations', 'rxInvestigations', 'patientsrx.id = rxInvestigations.patientsrxId')
+      .leftJoin('rxexaminations', 'rxexaminations', 'patientsrx.id = rxexaminations.patientsrxId')
+      .leftJoin('rxComplains', 'rxComplains', 'patientsrx.id = rxComplains.patientsrxId')
+      .leftJoinAndSelect('rxComplains.complains', 'complains')
+      .leftJoin('rxAdvice', 'rxAdvice', 'patientsrx.id = rxAdvice.patientsrxId')
+      .leftJoinAndSelect('rxAdvice.setAdvice', 'setAdvice')
+      .orderBy('patientsrx.id', 'DESC')
+      .getRawMany();
+*/
+
+      const take = Math.max(limit, 1); // Minimum limit is 1
+      const skip = (Math.max(page, 1) - 1) * take; // Minimum page is 1
+      // Fetch data with pagination and total count
+      const [data, total] = await this.patientRxRepository.findAndCount({
+        relations: {
+          patPatientInfo: {
+            doctor: true,
+          },
+          rxmedicine: {
+            medicine: true,
+          },
+          rxInvestigations: {
+            setInvestigations: true,
+          },
+          rxexaminations: {
+            setExamination: true,
+          },
+          rxComplains: {
+            complains: true,
+          },
+          rxAdvice: {
+            setAdvice: true,
+          },
+          rxPlain: {
+            setPlain: true,
+          },
+        },
+        order: {
+          id: 'DESC',
+        },
+        take, // Number of records to fetch
+        skip, // Number of records to skip
+      });
+      const datapp = await this.patientRxRepository.find({
+        relations: {
+          patPatientInfo: {
+            doctor: true,
+          },
+          rxmedicine: {
+            medicine: true,
+          },
+          rxInvestigations: {
+            setInvestigations: true,
+          },
+          rxexaminations: {
+            setExamination: true,
+          },
+          rxComplains: {
+            complains: true,
+          },
+          rxAdvice: {
+            setAdvice: true,
+          },
+          rxPlain: {
+            setPlain: true,
+          },
+          rxOnExamination: {
+            setOnExaminations: true,
+          },
+          rxPackage: {
+            setPackage: true,
+          },
+        },
+        order: {
+          id: 'DESC',
+        },
+        take, // Number of records to fetch
+        skip, // Number of records to skip
+      });
+
       const formattedData = data.map((patientdata) => ({
         patientId: patientdata.patPatientInfo?.id || null,
         patientsName: patientdata.patPatientInfo?.name || 'Unknown',
@@ -161,12 +337,15 @@ export class CreatepatientsrxService {
           evening: medicine?.evening || 0,
           night: medicine?.night || 0,
         })),
-        investigations: (patientdata.rxInvestigations || []).map((investigation) => ({
-          patientId: patientdata.patPatientInfo?.id || null,
-          rxInvestigationId: investigation?.id || null,
-          setInvestigationId: investigation?.setInvestigations?.id || null,
-          investigationName: investigation?.setInvestigations?.name || 'Unknown',
-        })),
+        investigations: (patientdata.rxInvestigations || []).map(
+          (investigation) => ({
+            patientId: patientdata.patPatientInfo?.id || null,
+            rxInvestigationId: investigation?.id || null,
+            setInvestigationId: investigation?.setInvestigations?.id || null,
+            investigationName:
+              investigation?.setInvestigations?.name || 'Unknown',
+          }),
+        ),
         examinations: (patientdata.rxexaminations || []).map((examination) => ({
           patientId: patientdata.patPatientInfo?.id || null,
           rxExaminationId: examination?.id || null,
@@ -185,10 +364,36 @@ export class CreatepatientsrxService {
           setAdviceId: advice?.setAdvice?.id || null,
           adviceName: advice?.setAdvice?.name || 'Unknown',
         })),
-      }));
-      
 
-      return formattedData;
+        plain: (patientdata.rxPlain || []).map((plain) => ({
+          patientId: patientdata.patPatientInfo?.id || null,
+          rxPlainId: plain?.id || null,
+          setPlainId: plain?.setPlain?.id || null,
+          plainName: plain?.setPlain?.name || 'Unknown',
+        })),
+
+        onexamination: (patientdata.rxOnExamination || []).map((onexa) => ({
+          patientId: patientdata.patPatientInfo?.id || null,
+          rxOnExamId: onexa?.id || null,
+          setOnExaminations: onexa?.setOnExaminations?.id || null,
+          onExamName: onexa?.setOnExaminations?.name || 'Unknown',
+        })),
+
+        package: (patientdata.rxPackage || []).map((pack) => ({
+          patientId: patientdata.patPatientInfo?.id || null,
+          rxPackageId: pack?.id || null,
+          setPackage: pack?.setPackage?.id || null,
+          packageName: pack?.setPackage?.name || 'Unknown',
+        })),
+      }));
+
+      return {
+        formattedData,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -201,6 +406,54 @@ export class CreatepatientsrxService {
     }
   }
 
+  async getAllPaginateData(page = 1, limit = 10) {
+    try {
+      const take = Math.max(limit, 1); // Minimum limit is 1
+      const skip = (Math.max(page, 1) - 1) * take; // Minimum page is 1
+      // Fetch data with pagination and total count
+      const [data, total] = await this.patientRxRepository.findAndCount({
+        relations: {
+          patPatientInfo: {
+            doctor: true,
+          },
+        },
+        order: {
+          id: 'DESC',
+        },
+        take,
+        skip,
+      });
+
+      const formattedData = data.map((patientdata) => ({
+        patientId: patientdata.patPatientInfo?.id || null,
+        patientsName: patientdata.patPatientInfo?.name || 'Unknown',
+        patientDoctorId: patientdata.patPatientInfo?.id || null,
+        rxDate: patientdata.RXDATE || null,
+      }));
+
+      // Calculating totalPages
+      const totalPages = Math.ceil(total / limit);
+
+      // Returning the formatted data with pagination details
+      return {
+        formattedData,
+        total,
+        page,
+        limit,
+        totalPages,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      throw new HttpException(
+        'Internal server error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+ 
   async create(@Body() createPatientDto: CreatePatientsRxDTO) {
     try {
       const {
@@ -461,7 +714,9 @@ export class CreatepatientsrxService {
           let setOnExam: any;
           if (rxOnExaminationDto.onExaminationId) {
             if (setOnExaminationMap.has(rxOnExaminationDto.onExaminationId)) {
-              setOnExam = setOnExaminationMap.has(rxOnExaminationDto.onExaminationId);
+              setOnExam = setOnExaminationMap.has(
+                rxOnExaminationDto.onExaminationId,
+              );
             } else {
               setOnExam = await this.setOnExamination.findOne({
                 where: { id: rxOnExaminationDto.onExaminationId },
@@ -469,9 +724,14 @@ export class CreatepatientsrxService {
             }
 
             if (!setOnExaminationMap) {
-              throw new Error(`Advice ${rxOnExaminationDto.onExaminationId} not found`);
+              throw new Error(
+                `Advice ${rxOnExaminationDto.onExaminationId} not found`,
+              );
             }
-            setOnExaminationMap.set(rxOnExaminationDto.onExaminationId, setOnExam);
+            setOnExaminationMap.set(
+              rxOnExaminationDto.onExaminationId,
+              setOnExam,
+            );
           } else {
             setOnExam =
               this.rxOnExaminationRepository.create(rxOnExaminationDto);
@@ -488,43 +748,40 @@ export class CreatepatientsrxService {
         }
       }
 
-            //rxPackages
-            if (rxPackage && rxPackage.length > 0) {
-              console.log("rxPackage", rxPackage);
-              for (const rxPackageDto of rxPackage) {
-                let setPackage: any;
-                console.log("rxPackageDto", rxPackageDto);
-                if (rxPackageDto.packageId) {
-                  if (setPackageMap.has(rxPackageDto.packageId)) {
-                    setPackage = setPackageMap.has(rxPackageDto.packageId);
-                  } else {
-                    setPackage = await this.setPackageRepository.findOne({
-                      where: { id: rxPackageDto.packageId },
-                    });
-                  }
-      
-                  if (!setPackageMap) {
-                    throw new Error(`Advice ${rxPackageDto.packageId} not found`);
-                  }
-
-                  setPackageMap.set(rxPackageDto.packageId, setPackage);
-
-                } else {
-
-                  setPackage =
-                    this.rxPackageRepository.create(rxPackageDto);
-                    setPackage = await this.rxPackageRepository.save(setPackage);
-                    setPackageMap.set(setPackage.id, setPackage);
-                }
-      
-                const rxPack = this.rxPackageRepository.create({
-                  ...rxPackageDto,
-                  patientRx: savePatientRx,
-                  setPackage: setPackage,
-                });
-                await this.rxPackageRepository.save(rxPack);
-              }
+      //rxPackages
+      if (rxPackage && rxPackage.length > 0) {
+        console.log('rxPackage', rxPackage);
+        for (const rxPackageDto of rxPackage) {
+          let setPackage: any;
+          console.log('rxPackageDto', rxPackageDto);
+          if (rxPackageDto.packageId) {
+            if (setPackageMap.has(rxPackageDto.packageId)) {
+              setPackage = setPackageMap.has(rxPackageDto.packageId);
+            } else {
+              setPackage = await this.setPackageRepository.findOne({
+                where: { id: rxPackageDto.packageId },
+              });
             }
+
+            if (!setPackageMap) {
+              throw new Error(`Advice ${rxPackageDto.packageId} not found`);
+            }
+
+            setPackageMap.set(rxPackageDto.packageId, setPackage);
+          } else {
+            setPackage = this.rxPackageRepository.create(rxPackageDto);
+            setPackage = await this.rxPackageRepository.save(setPackage);
+            setPackageMap.set(setPackage.id, setPackage);
+          }
+
+          const rxPack = this.rxPackageRepository.create({
+            ...rxPackageDto,
+            patientRx: savePatientRx,
+            setPackage: setPackage,
+          });
+          await this.rxPackageRepository.save(rxPack);
+        }
+      }
 
       return savePatientRx;
     } catch (error) {
