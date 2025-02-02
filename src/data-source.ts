@@ -25,9 +25,15 @@ export const AppDataSource: DataSourceOptions = {
   type: 'mysql',
   host: '192.168.0.106',
   port: 3306,
-  username: 'queue_management',
-  password: 'Management_$QE24',
-  database: 'queue_management',
+
+  username: 'qms_uat',
+  password: 'qms_uat',
+  database: 'qms_uat',
+
+  // username: 'queue_management',
+  // password: 'Management_$QE24',
+  // database: 'queue_management',
+
   entities: [
     PatPatientsInformation,
     Patientsrx,

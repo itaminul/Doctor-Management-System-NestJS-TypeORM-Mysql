@@ -10,7 +10,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Patientsrx } from 'src/entitys/patientsrx';
 import { Rxexaminations } from 'src/entitys/rxexaminations';
 import { Rxmedicine } from 'src/entitys/rxmedicine';
-import { Repository } from 'typeorm';
+import {
+  Brackets,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { CreatePatientsRxDTO } from './dto/patientrx.dto';
 import { UpdatePatientsRxDTO } from './dto/updatePatientrx.dto';
 import { RxInvestigations } from 'src/entitys/rxinvestigations';
@@ -316,8 +321,8 @@ export class CreatepatientsrxService {
         order: {
           id: 'DESC',
         },
-        take, // Number of records to fetch
-        skip, // Number of records to skip
+        take, 
+        skip,
       });
 
       const formattedData = data.map((patientdata) => ({
@@ -406,23 +411,27 @@ export class CreatepatientsrxService {
     }
   }
 
-  async getAllPaginateData(page = 1, limit = 10) {
+  async getAllPaginateData(fromDate: string, toDate: string) {
     try {
-      const take = Math.max(limit, 1); // Minimum limit is 1
-      const skip = (Math.max(page, 1) - 1) * take; // Minimum page is 1
-      // Fetch data with pagination and total count
-      const [data, total] = await this.patientRxRepository.findAndCount({
-        relations: {
-          patPatientInfo: {
-            doctor: true,
+      const startDate = fromDate;
+      const endDate = toDate;
+      const data = await this.patientRxRepository
+        .createQueryBuilder('patientRx')
+        .leftJoinAndSelect('patientRx.patPatientInfo', 'patPatientInfo')
+        .leftJoinAndSelect('patPatientInfo.doctor', 'doctor')
+        .where(
+          'STR_TO_DATE(patientRx.RXDATE, "%d/%m/%Y") BETWEEN :startDate AND :endDate',
+          {
+            startDate,
+            endDate,
           },
-        },
-        order: {
-          id: 'DESC',
-        },
-        take,
-        skip,
-      });
+        )
+        .orderBy('patientRx.id', 'DESC')
+        .getMany();
+      // Check if no data is found
+      if (data.length === 0) {
+        throw new HttpException('Data not found', HttpStatus.NOT_FOUND);
+      }
 
       const formattedData = data.map((patientdata) => ({
         patientId: patientdata.patPatientInfo?.id || null,
@@ -430,18 +439,7 @@ export class CreatepatientsrxService {
         patientDoctorId: patientdata.patPatientInfo?.id || null,
         rxDate: patientdata.RXDATE || null,
       }));
-
-      // Calculating totalPages
-      const totalPages = Math.ceil(total / limit);
-
-      // Returning the formatted data with pagination details
-      return {
-        formattedData,
-        total,
-        page,
-        limit,
-        totalPages,
-      };
+      return formattedData;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -453,7 +451,7 @@ export class CreatepatientsrxService {
       );
     }
   }
- 
+
   async create(@Body() createPatientDto: CreatePatientsRxDTO) {
     try {
       const {
@@ -467,7 +465,7 @@ export class CreatepatientsrxService {
         rxPackage,
         ...patientData
       } = createPatientDto;
-      console.log('save data in prescription', createPatientDto);
+      // console.log('save data in prescription', createPatientDto);
       const patientDataa = this.patientRxRepository.create(patientData);
       const savePatientRx = await this.patientRxRepository.save(patientDataa);
       const medicineMap = new Map<number, Medicine>();
@@ -750,10 +748,8 @@ export class CreatepatientsrxService {
 
       //rxPackages
       if (rxPackage && rxPackage.length > 0) {
-        console.log('rxPackage', rxPackage);
         for (const rxPackageDto of rxPackage) {
           let setPackage: any;
-          console.log('rxPackageDto', rxPackageDto);
           if (rxPackageDto.packageId) {
             if (setPackageMap.has(rxPackageDto.packageId)) {
               setPackage = setPackageMap.has(rxPackageDto.packageId);
